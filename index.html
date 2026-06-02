@@ -232,7 +232,7 @@ tr:hover td{background:var(--s2)}
 <!-- MAIN -->
 <div id="main-wrap">
   <div id="topbar">
-    <button id="menu-btn" onclick="toggleSidebar()">
+    <button id="menu-btn">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <span id="topbar-title">Dashboard</span>
@@ -281,8 +281,7 @@ const pageTitles = {
 function navigate(p, data){
   page = p;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const btns = document.querySelectorAll('.nav-btn');
-  btns.forEach(b=>{ if(b.getAttribute('onclick')===`navigate('${p}')`) b.classList.add('active'); });
+  document.querySelectorAll('[data-nav="'+p+'"]').forEach(b=>b.classList.add('active'));
   document.getElementById('topbar-title').textContent = pageTitles[p]||p;
   const renders = {
     dashboard: renderDashboard,
@@ -1210,14 +1209,20 @@ function toast(msg,type='success'){
 }
 
 // ===== INIT =====
-// Event delegation — handles sidebar/topbar nav without inline onclick (CSP safe)
-document.addEventListener('click', function(e) {
-  const navBtn = e.target.closest('[data-nav]');
-  if (navBtn) { e.preventDefault(); navigate(navBtn.dataset.nav); return; }
-  const overlay = e.target.closest('#sb-overlay');
-  if (overlay) closeSidebar();
-});
+function initNavButtons() {
+  document.querySelectorAll('[data-nav]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      navigate(btn.getAttribute('data-nav'));
+    });
+  });
+  var overlay = document.getElementById('sb-overlay');
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+  var menuBtn = document.getElementById('menu-btn');
+  if (menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+}
 navigate('dashboard');
+initNavButtons();
 </script>
 </body>
 </html>
