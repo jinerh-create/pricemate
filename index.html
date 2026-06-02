@@ -177,7 +177,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
-<div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+<div class="sb-overlay" id="sb-overlay"></div>
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
@@ -187,38 +187,38 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
   <div class="sb-nav">
     <div class="sb-section">Main</div>
-    <button class="nav-btn active" onclick="navigate('dashboard')">
+    <button class="nav-btn active" data-nav="dashboard">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
       Dashboard
     </button>
-    <button class="nav-btn" onclick="navigate('products')">
+    <button class="nav-btn" data-nav="products">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       Products
     </button>
-    <button class="nav-btn" onclick="navigate('add-product')">
+    <button class="nav-btn" data-nav="add-product">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       Add Product
     </button>
     <div class="sb-section">Calculator</div>
-    <button class="nav-btn" onclick="navigate('cost-calc')">
+    <button class="nav-btn" data-nav="cost-calc">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
       Cost Calculator
     </button>
-    <button class="nav-btn" onclick="navigate('price-calc')">
+    <button class="nav-btn" data-nav="price-calc">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Price Calculator
     </button>
     <div class="sb-section">Reports</div>
-    <button class="nav-btn" onclick="navigate('reports')">
+    <button class="nav-btn" data-nav="reports">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Reports
     </button>
-    <button class="nav-btn" onclick="navigate('suppliers')">
+    <button class="nav-btn" data-nav="suppliers">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Suppliers
     </button>
     <div class="sb-section">System</div>
-    <button class="nav-btn" onclick="navigate('settings')">
+    <button class="nav-btn" data-nav="settings">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </button>
@@ -236,7 +236,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </button>
     <span id="topbar-title">Dashboard</span>
     <div style="flex:1"></div>
-    <button class="topbar-btn" onclick="navigate('add-product')">
+    <button class="topbar-btn" data-nav="add-product">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Product
     </button>
@@ -1209,6 +1209,13 @@ function toast(msg,type='success'){
 }
 
 // ===== INIT =====
+// Event delegation — handles sidebar/topbar nav without inline onclick (CSP safe)
+document.addEventListener('click', function(e) {
+  const navBtn = e.target.closest('[data-nav]');
+  if (navBtn) { e.preventDefault(); navigate(navBtn.dataset.nav); return; }
+  const overlay = e.target.closest('#sb-overlay');
+  if (overlay) closeSidebar();
+});
 navigate('dashboard');
 </script>
 </body>
