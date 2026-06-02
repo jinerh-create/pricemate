@@ -186,7 +186,7 @@ tfoot td{background:var(--s2)!important;font-weight:700;color:var(--t)}
   </div>
   <div class="sb-nav">
     <div class="sb-sec">Main</div>
-    <a class="nb active" href="#dashboard">
+    <a class="nb" href="#dashboard">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
       Dashboard
     </a>
@@ -296,7 +296,7 @@ const TITLES = {'dashboard':'Dashboard','new-order':'New Import Order','orders':
 let currentPage = 'dashboard';
 
 function routeFromHash() {
-  const h = window.location.hash.replace('#','') || 'dashboard';
+  const h = window.location.hash.replace('#','') || 'calculator';
   currentPage = h;
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
   const lnk = document.querySelector('a.nb[href="#'+h+'"]');
@@ -926,21 +926,22 @@ function renderCalculator() {
   <div class="card" style="margin-bottom:14px">
     <div class="ct">🧮 Quick Import Cost Calculator</div>
     <div class="fr fr3">
-      <div><label>Unit Price (USD)</label><div class="pfx"><span>$</span><input type="number" id="c-price" placeholder="2.29" step="0.01" oninput="qCalc()"></div></div>
-      <div><label>Quantity</label><input type="number" id="c-qty" placeholder="15" oninput="qCalc()"></div>
-      <div><label>Exchange Rate (USD→MVR)</label><input type="number" id="c-xr" value="${settings.exchangeRate}" step="0.01" oninput="qCalc()"></div>
+      <div><label>Unit Price (USD)</label><div class="pfx"><span>$</span><input type="number" id="c-price" placeholder="2.29" step="0.01"></div></div>
+      <div><label>Quantity</label><input type="number" id="c-qty" placeholder="15"></div>
+      <div><label>Exchange Rate (USD→MVR)</label><input type="number" id="c-xr" value="${settings.exchangeRate}" step="0.01"></div>
     </div>
     <div class="fr fr4">
-      <div><label>Cargo Fee (%)</label><input type="number" id="c-cargo" value="${settings.cargoFeeRate}" step="0.5" oninput="qCalc()"></div>
-      <div><label>Freight (USD/KG)</label><input type="number" id="c-frkg" value="${settings.freightPerKg}" step="0.01" oninput="qCalc()"></div>
-      <div><label>Item Weight (KG)</label><input type="number" id="c-wt" placeholder="0.5" step="0.1" oninput="qCalc()"></div>
-      <div><label>Customs Duty (%)</label><input type="number" id="c-cust" value="${settings.customsDutyRate}" step="0.5" oninput="qCalc()"></div>
+      <div><label>Cargo Fee (%)</label><input type="number" id="c-cargo" value="${settings.cargoFeeRate}" step="0.5"></div>
+      <div><label>Freight (USD/KG)</label><input type="number" id="c-frkg" value="${settings.freightPerKg}" step="0.01"></div>
+      <div><label>Item Weight (KG)</label><input type="number" id="c-wt" placeholder="0.5" step="0.1"></div>
+      <div><label>Customs Duty (%)</label><input type="number" id="c-cust" value="${settings.customsDutyRate}" step="0.5"></div>
     </div>
     <div class="fr fr3">
-      <div><label>GST Rate (%)</label><input type="number" id="c-gst" value="${settings.gstRate}" step="0.5" oninput="qCalc()"></div>
-      <div><label>Profit Margin (%)</label><input type="number" id="c-margin" value="${settings.profitMargin}" step="1" oninput="qCalc()"></div>
-      <div><label>Short Freight (USD)</label><input type="number" id="c-shortfr" value="0" step="0.01" oninput="qCalc()"></div>
+      <div><label>GST Rate (%)</label><input type="number" id="c-gst" value="${settings.gstRate}" step="0.5"></div>
+      <div><label>Profit Margin (%)</label><input type="number" id="c-margin" value="${settings.profitMargin}" step="1"></div>
+      <div><label>Short Freight (USD)</label><input type="number" id="c-shortfr" value="0" step="0.01"></div>
     </div>
+    <button class="btn btn-p" style="width:100%;margin-top:4px" id="calc-btn">⚡ Calculate Prices</button>
   </div>
   <div class="card" id="qcalc-result">
     <div style="text-align:center;padding:24px;color:var(--t3)">Fill in price and quantity to calculate</div>
@@ -1171,7 +1172,7 @@ function toast(msg, type='s') {
 
 // =================== INIT ===================
 function routeFromHash() {
-  const h = window.location.hash.replace('#','') || 'dashboard';
+  const h = window.location.hash.replace('#','') || 'calculator';
   currentPage = h;
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   const lnk = document.querySelector('a.nb[href="#'+h+'"]');
@@ -1186,6 +1187,16 @@ function routeFromHash() {
   document.getElementById('pg').innerHTML = fn ? fn() : '';
   if (h==='dashboard') setTimeout(initCharts,80);
   if (h==='new-order') { renderItemsBody(); setTimeout(liveCalcForm,50); }
+  if (h==='calculator') {
+    setTimeout(function(){
+      ['c-price','c-qty','c-xr','c-cargo','c-frkg','c-wt','c-cust','c-gst','c-margin','c-shortfr'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('input', qCalc);
+      });
+      var btn = document.getElementById('calc-btn');
+      if (btn) btn.addEventListener('click', qCalc);
+    }, 50);
+  }
   document.getElementById('ov').classList.remove('show');
   document.getElementById('sidebar').classList.remove('open');
   window.scrollTo(0,0);
