@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PriceMate — Cost & Price Calculator</title>
+<title>PriceMate — Import Cost Calculator</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -14,1209 +14,1192 @@
   --bg:#F5F3F0;--s1:#FFFFFF;--s2:#F8F7F5;--s3:#EFEDE9;
   --t:#1C1917;--t2:#44403C;--t3:#78716C;
   --accent:#0D9488;--accent2:#2563EB;--gold:#D97706;
-  --danger:#DC2626;--purple:#7C3AED;
+  --danger:#DC2626;--purple:#7C3AED;--green:#16A34A;
   --border:rgba(0,0,0,0.08);--radius:12px;
   --shadow:0 1px 4px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
 }
 body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;overflow-x:hidden}
 
 /* SIDEBAR */
-#sidebar{width:240px;min-height:100vh;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s;box-shadow:2px 0 12px rgba(0,0,0,0.05)}
-.logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#0F766E);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 2px 8px rgba(13,148,136,.3)}
-.logo-text{font-size:17px;font-weight:800;color:var(--t);letter-spacing:-.3px}
-.logo-sub{font-size:9px;color:var(--t3);letter-spacing:.08em;font-weight:600}
-.sb-nav{flex:1;padding:10px 8px;overflow-y:auto}
-.sb-section{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.1em;padding:12px 10px 4px;text-transform:uppercase}
-.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border:none;background:none;color:var(--t3);cursor:pointer;border-radius:8px;font-size:13px;font-family:inherit;text-align:left;transition:all .15s;margin-bottom:1px;text-decoration:none}
-.nav-btn:hover{background:var(--s2);color:var(--t2)}
-.nav-btn.active{background:rgba(13,148,136,.1);color:var(--accent);font-weight:600}
-.nav-btn svg{flex-shrink:0;opacity:.6}
-.nav-btn.active svg{opacity:1}
-.sb-bottom{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar{width:230px;min-height:100vh;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s;box-shadow:2px 0 12px rgba(0,0,0,0.06)}
+.logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#0F766E);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:16px;font-weight:800;color:var(--t);letter-spacing:-.3px}
+.logo-sub{font-size:9px;color:var(--t3);letter-spacing:.06em;font-weight:600}
+.sb-nav{flex:1;padding:8px;overflow-y:auto}
+.sb-sec{font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.1em;padding:10px 8px 3px;text-transform:uppercase}
+.nb{width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;background:none;color:var(--t3);cursor:pointer;border-radius:8px;font-size:13px;font-family:inherit;text-align:left;transition:all .15s;margin-bottom:1px;text-decoration:none;border:none}
+.nb:hover{background:var(--s2);color:var(--t2)}
+.nb.active{background:rgba(13,148,136,.1);color:var(--accent);font-weight:600}
+.nb svg{flex-shrink:0;opacity:.55}
+.nb.active svg{opacity:1}
+.sb-bot{padding:10px 8px;border-top:1px solid var(--border)}
 
 /* MAIN */
-#main-wrap{margin-left:240px;flex:1;min-height:100vh;display:flex;flex-direction:column}
-#topbar{height:56px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-#topbar-title{font-size:15px;font-weight:700;flex:1;color:var(--t)}
-.topbar-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s1);color:var(--t2);cursor:pointer;font-size:12px;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .15s;box-shadow:var(--shadow)}
-.topbar-btn:hover{background:var(--s2);color:var(--t)}
-#page{padding:20px;flex:1}
+#mw{margin-left:230px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+#topbar{height:52px;background:var(--s1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+#topbar-title{font-size:14px;font-weight:700;flex:1;color:var(--t)}
+.tbtn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s1);color:var(--t2);cursor:pointer;font-size:12px;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .15s;box-shadow:var(--shadow);text-decoration:none}
+.tbtn:hover{background:var(--s2);color:var(--t)}
+#pg{padding:18px;flex:1}
 
 /* CARDS */
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
-.card-title{font-size:13px;font-weight:700;color:var(--t);margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
-.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:6px}
-.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
-.stat-val{font-size:22px;font-weight:800;color:var(--t)}
-.stat-lbl{font-size:11px;color:var(--t3);font-weight:500}
-.stat-change{font-size:10px;font-weight:600}
-.stat-change.up{color:var(--accent)}
-.stat-change.down{color:var(--danger)}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.ct{font-size:12px;font-weight:700;color:var(--t);margin-bottom:12px;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.04em}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.sc{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:4px;box-shadow:var(--shadow)}
+.sv{font-size:20px;font-weight:800;color:var(--t)}
+.sl{font-size:11px;color:var(--t3);font-weight:500}
+.sc-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
 
 /* FORMS */
-.form-group{margin-bottom:14px}
-.form-row{display:grid;gap:12px;margin-bottom:14px}
-.form-row.cols-2{grid-template-columns:1fr 1fr}
-.form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
-.form-row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr}
-label{display:block;font-size:11px;font-weight:600;color:var(--t3);margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
-input,select,textarea{width:100%;background:var(--s2);border:1px solid #E5E3E0;border-radius:8px;padding:9px 12px;color:var(--t);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s;box-shadow:inset 0 1px 2px rgba(0,0,0,0.04)}
+.fr{display:grid;gap:10px;margin-bottom:12px}
+.fr2{grid-template-columns:1fr 1fr}
+.fr3{grid-template-columns:1fr 1fr 1fr}
+.fr4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fr5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+label{display:block;font-size:10px;font-weight:700;color:var(--t3);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
+input,select,textarea{width:100%;background:var(--s2);border:1px solid #E5E3E0;border-radius:7px;padding:8px 11px;color:var(--t);font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(13,148,136,.1)}
 input[type=number]{-moz-appearance:textfield}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+input[readonly]{background:var(--s3);color:var(--accent);font-weight:700;cursor:default}
+.pfx{position:relative}
+.pfx span{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:11px;pointer-events:none;font-weight:600}
+.pfx input{padding-left:28px}
 select option{background:var(--s1);color:var(--t)}
-.input-prefix{position:relative}
-.input-prefix span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:12px;pointer-events:none}
-.input-prefix input{padding-left:26px}
 
 /* BUTTONS */
-.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#059669}
-.btn-secondary{background:var(--s2);color:var(--t2);border:1px solid var(--border)}
-.btn-secondary:hover{background:var(--s3);color:var(--t)}
-.btn-danger{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
-.btn-danger:hover{background:rgba(239,68,68,.25)}
-.btn-sm{padding:6px 12px;font-size:11px;border-radius:6px}
-.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:#0F766E}
+.btn-s{background:var(--s2);color:var(--t2);border:1px solid var(--border)}
+.btn-s:hover{background:var(--s3);color:var(--t)}
+.btn-d{background:rgba(220,38,38,.08);color:var(--danger);border:1px solid rgba(220,38,38,.15)}
+.btn-d:hover{background:rgba(220,38,38,.15)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-gold{background:linear-gradient(135deg,#D97706,#B45309);color:#fff}
 .btn-blue{background:var(--accent2);color:#fff}
 
 /* TABLE */
-.tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.tw{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead{background:var(--s2)}
-th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-td{padding:11px 14px;border-top:1px solid var(--border);color:var(--t2);vertical-align:middle;background:var(--s1)}
+th{padding:9px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--border);color:var(--t2);vertical-align:middle;background:var(--s1)}
 tr:hover td{background:var(--s2)}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
-.badge-green{background:rgba(16,185,129,.15);color:var(--accent)}
-.badge-blue{background:rgba(59,130,246,.15);color:var(--accent2)}
-.badge-gold{background:rgba(245,158,11,.15);color:var(--gold)}
-.badge-red{background:rgba(239,68,68,.15);color:var(--danger)}
-.badge-purple{background:rgba(139,92,246,.15);color:var(--purple)}
+tfoot td{background:var(--s2)!important;font-weight:700;color:var(--t)}
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
-.modal{background:var(--s1);border:1px solid var(--border);border-radius:16px;width:100%;max-width:760px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-.modal-lg{max-width:960px}
-.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:15px;font-weight:700;color:var(--t)}
-.modal-body{padding:20px}
-.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
-.close-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--s2);color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
-.close-btn:hover{background:var(--s3);color:var(--t)}
+/* ITEMS TABLE */
+.items-table{width:100%;border-collapse:collapse;font-size:12px}
+.items-table th{background:var(--s2);padding:8px 10px;text-align:left;font-size:9px;font-weight:700;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.items-table td{padding:6px 6px;border-top:1px solid var(--border);vertical-align:middle}
+.items-table td input,.items-table td select{padding:6px 8px;font-size:12px;border-radius:5px;background:var(--s2)}
 
-/* CALC DISPLAY */
-.calc-box{background:var(--s2);border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
-.calc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.calc-row:last-child{border-bottom:none}
-.calc-row.total{font-weight:700;font-size:13px;color:var(--t);padding-top:10px;margin-top:4px}
-.calc-row.total .calc-val{color:var(--accent);font-size:15px}
-.calc-lbl{color:var(--t3)}
-.calc-val{color:var(--t);font-weight:600}
-.highlight-box{background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(37,99,235,.04));border:1px solid rgba(13,148,136,.2);border-radius:10px;padding:14px;text-align:center;margin-bottom:10px}
-.highlight-val{font-size:28px;font-weight:800;color:var(--accent)}
-.highlight-lbl{font-size:11px;color:var(--t3);margin-top:2px}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.bg{background:rgba(13,148,136,.12);color:var(--accent)}
+.bb{background:rgba(37,99,235,.12);color:var(--accent2)}
+.by{background:rgba(217,119,6,.12);color:var(--gold)}
+.br{background:rgba(220,38,38,.12);color:var(--danger)}
+.bp{background:rgba(124,58,237,.12);color:var(--purple)}
 
-/* TABS */
-.tabs{display:flex;gap:4px;background:var(--s3);padding:4px;border-radius:10px;margin-bottom:18px;border:1px solid var(--border)}
-.tab{flex:1;padding:8px 12px;border-radius:7px;border:none;background:none;color:var(--t3);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .15s;text-align:center}
-.tab.active{background:var(--s1);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+/* COST BREAKDOWN */
+.cbox{background:var(--s2);border-radius:9px;padding:12px;border:1px solid var(--border);margin-bottom:8px}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.crow:last-child{border-bottom:none}
+.crow.tot{font-weight:700;font-size:13px;color:var(--t);border-top:2px solid var(--border);margin-top:4px;padding-top:8px}
+.crow.tot .cv{color:var(--accent)}
+.cl{color:var(--t3)}
+.cv{color:var(--t);font-weight:600}
+.hbox{background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(37,99,235,.04));border:1px solid rgba(13,148,136,.2);border-radius:9px;padding:14px;text-align:center;margin-bottom:8px}
+.hval{font-size:24px;font-weight:800;color:var(--accent)}
+.hlbl{font-size:10px;color:var(--t3);margin-top:2px}
+
+/* RESULTS GRID - SIZE PRICES */
+.size-result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:12px}
+.size-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px;box-shadow:var(--shadow);text-align:center}
+.size-card .sz{font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px}
+.size-card .cost{font-size:11px;color:var(--t3);margin-bottom:6px}
+.size-card .sell{font-size:18px;font-weight:800;color:var(--accent)}
+.size-card .prof{font-size:10px;color:var(--green);margin-top:3px}
+.size-card .qty{font-size:10px;color:var(--t3)}
 
 /* DIVIDER */
-.divider{height:1px;background:var(--border);margin:16px 0}
-.section-title{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* SIZE PRICING */
-.size-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
-.size-item{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
-.size-item label{font-size:10px;margin-bottom:6px;display:block}
-.size-item input{text-align:center;padding:6px;font-size:13px}
-
-/* PROGRESS */
-.progress-bar{height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:4px}
-.progress-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .4s}
+.div{height:1px;background:var(--border);margin:14px 0}
+.sec-title{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* EMPTY */
-.empty{text-align:center;padding:48px 20px;color:var(--t3)}
-.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5}
-.empty-text{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:6px}
-.empty-sub{font-size:12px}
+.empty{text-align:center;padding:40px 20px;color:var(--t3)}
+.empty-icon{font-size:36px;margin-bottom:10px;opacity:.5}
+
+/* PROGRESS */
+.pb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin-top:4px}
+.pf{height:100%;border-radius:3px;background:var(--accent);transition:width .4s}
 
 /* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
-.toast-item{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--t);box-shadow:0 8px 32px rgba(0,0,0,.12);animation:slideIn .3s ease;display:flex;align-items:center;gap:10px;min-width:280px}
-.toast-item.success{border-left:3px solid var(--accent)}
-.toast-item.error{border-left:3px solid var(--danger)}
-.toast-item.info{border-left:3px solid var(--accent2)}
-@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+#toast{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.ti{background:var(--s1);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-size:12px;color:var(--t);box-shadow:0 8px 24px rgba(0,0,0,.12);animation:si .25s ease;display:flex;align-items:center;gap:8px;min-width:240px}
+.ti.s{border-left:3px solid var(--accent)}
+.ti.e{border-left:3px solid var(--danger)}
+.ti.i{border-left:3px solid var(--accent2)}
+@keyframes si{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* CHART CONTAINER */
-.chart-wrap{position:relative;height:220px}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.md{background:var(--s1);border:1px solid var(--border);border-radius:14px;width:100%;max-width:700px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.mh{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mt{font-size:14px;font-weight:700;color:var(--t)}
+.mb{padding:18px}
+.mf{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.xb{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--s2);color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* CHART */
+.ch{position:relative;height:200px}
 
 /* MOBILE */
-#menu-btn{display:none;background:none;border:none;color:var(--t);cursor:pointer;padding:4px}
-.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
-
+#mbtn{display:none;background:none;border:none;color:var(--t);cursor:pointer}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
 @media(max-width:768px){
   #sidebar{transform:translateX(-100%)}
   #sidebar.open{transform:translateX(0)}
-  #main-wrap{margin-left:0}
-  #menu-btn{display:block}
-  .sb-overlay.show{display:block}
-  .grid-4,.grid-3{grid-template-columns:repeat(2,1fr)}
-  .grid-2,.form-row.cols-2,.form-row.cols-3,.form-row.cols-4{grid-template-columns:1fr}
-  .size-grid{grid-template-columns:repeat(3,1fr)}
-  .modal{margin:0;border-radius:0;max-height:100vh;overflow-y:auto}
-  .modal-overlay{padding:0;align-items:flex-end}
+  #mw{margin-left:0}
+  #mbtn{display:block}
+  .ov.show{display:block}
+  .g4,.g3{grid-template-columns:repeat(2,1fr)}
+  .g2,.fr2,.fr3,.fr4,.fr5{grid-template-columns:1fr}
+  .size-result-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
-<div class="sb-overlay" id="sb-overlay"></div>
 
-<!-- SIDEBAR -->
+<div class="ov" id="ov"></div>
+
 <nav id="sidebar">
   <div class="logo">
-    <div class="logo-icon">💰</div>
-    <div><div class="logo-text">PriceMate</div><div class="logo-sub">COST & PRICE CALCULATOR</div></div>
+    <div class="logo-icon">📦</div>
+    <div><div class="logo-text">PriceMate</div><div class="logo-sub">IMPORT COST CALCULATOR</div></div>
   </div>
   <div class="sb-nav">
-    <div class="sb-section">Main</div>
-    <a class="nav-btn active" href="#dashboard">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+    <div class="sb-sec">Main</div>
+    <a class="nb active" href="#dashboard">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
       Dashboard
     </a>
-    <a class="nav-btn" href="#products">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-      Products
+    <a class="nb" href="#new-order">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      New Import Order
     </a>
-    <a class="nav-btn" href="#add-product">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Add Product
+    <a class="nb" href="#orders">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      All Orders
     </a>
-    <div class="sb-section">Calculator</div>
-    <a class="nav-btn" href="#cost-calc">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
-      Cost Calculator
+    <div class="sb-sec">Tools</div>
+    <a class="nb" href="#calculator">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+      Quick Calculator
     </a>
-    <a class="nav-btn" href="#price-calc">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Price Calculator
-    </a>
-    <div class="sb-section">Reports</div>
-    <a class="nav-btn" href="#reports">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <a class="nb" href="#reports">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Reports
     </a>
-    <a class="nav-btn" href="#suppliers">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Suppliers
-    </a>
-    <div class="sb-section">System</div>
-    <a class="nav-btn" href="#settings">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <div class="sb-sec">System</div>
+    <a class="nb" href="#settings">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
     </a>
   </div>
-  <div class="sb-bottom">
-    <div style="font-size:10px;color:var(--t3);text-align:center">PriceMate v1.0 · All data local</div>
+  <div class="sb-bot">
+    <div style="font-size:10px;color:var(--t3);text-align:center">PriceMate v2.0 · All data local</div>
   </div>
 </nav>
 
-<!-- MAIN -->
-<div id="main-wrap">
+<div id="mw">
   <div id="topbar">
-    <button id="menu-btn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
+    <button id="mbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     <span id="topbar-title">Dashboard</span>
     <div style="flex:1"></div>
-    <a class="topbar-btn" href="#add-product">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Product
+    <a class="tbtn" href="#new-order">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Order
     </a>
   </div>
-  <div id="page"></div>
+  <div id="pg"></div>
 </div>
 
-<!-- MODAL CONTAINER -->
 <div id="mc"></div>
 <div id="toast"></div>
 
 <script>
-// ===== DATA =====
-const CATS = ['Food & Beverage','Electronics','Clothing','Household','Health & Beauty','Stationery','Hardware','Toys','Sports','Other'];
-const SIZES = ['Small','Medium','Large','Extra Large','Custom'];
-const DEF_SETTINGS = {currency:'MVR',gstRate:6,profitMargin:20,minMargin:10,darkMode:true};
+// =================== DATA ===================
+const UID = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const DEF = {currency:'MVR',exchangeRate:15.42,gstRate:6,profitMargin:30,customsDutyRate:20,minMargin:15,cargoFeeRate:16,freightPerKg:3.62};
 
-let products = JSON.parse(localStorage.getItem('pm_products')||'[]');
-let suppliers = JSON.parse(localStorage.getItem('pm_suppliers')||'[]');
-let settings = JSON.parse(localStorage.getItem('pm_settings')||JSON.stringify(DEF_SETTINGS));
+let orders   = JSON.parse(localStorage.getItem('pm_orders')  || '[]');
+let settings = JSON.parse(localStorage.getItem('pm_settings')|| JSON.stringify(DEF));
+let editingOrderId = null;
 
-function saveData(){
-  localStorage.setItem('pm_products',JSON.stringify(products));
-  localStorage.setItem('pm_suppliers',JSON.stringify(suppliers));
-  localStorage.setItem('pm_settings',JSON.stringify(settings));
+function save() {
+  localStorage.setItem('pm_orders', JSON.stringify(orders));
+  localStorage.setItem('pm_settings', JSON.stringify(settings));
 }
+
 const cur = () => settings.currency || 'MVR';
-const fmt = n => cur()+' '+(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
-const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const pct = (v,t) => t ? ((v/t)*100).toFixed(1) : '0';
+const fmv = n => cur()+' '+(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fusd = n => 'USD '+(+n||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+const n2 = n => (+(+n||0).toFixed(2));
 
-// ===== NAVIGATION =====
-let page = 'dashboard';
-const pageTitles = {
-  dashboard:'Dashboard',products:'Products',
-  'add-product':'Add Product','edit-product':'Edit Product',
-  'cost-calc':'Cost Calculator','price-calc':'Price Calculator',
-  reports:'Reports',suppliers:'Suppliers',settings:'Settings'
-};
+// =================== CALCULATIONS ===================
+function calcOrder(o) {
+  const items = o.items || [];
+  const xr = +o.exchangeRate || 15.42;
+  const invoiceSub = items.reduce((s,i)=>(s + (+i.qty||0)*(+i.unitPriceUSD||0)), 0);
+  const cargoFee   = invoiceSub * (+o.cargoFeeRate||0)/100;
+  const freight    = (+o.freightPerKg||0) * (+o.totalWeightKg||0);
+  const shortFr    = +o.shortFreight||0;
+  const cifTotal   = invoiceSub + cargoFee + freight + shortFr;
+  const customs    = cifTotal * (+o.customsDutyRate||0)/100;
+  const other      = +o.otherCosts||0;
+  const grandTotalUSD = cifTotal + customs + other;
+  const grandTotalMVR = grandTotalUSD * xr;
 
-function navigate(p, data){
-  page = p;
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('a.nav-btn[href="#'+p+'"]').forEach(b=>b.classList.add('active'));
-  document.getElementById('topbar-title').textContent = pageTitles[p]||p;
+  // Per-item calculation (allocate by value proportion)
+  const calcItems = items.map(item => {
+    const itemTotalUSD = (+item.qty||0) * (+item.unitPriceUSD||0);
+    const prop = invoiceSub > 0 ? itemTotalUSD / invoiceSub : 0;
+    const itemCargoShare = cargoFee * prop;
+    const itemFreightShare = (freight + shortFr) * prop;
+    const itemCifUSD = itemTotalUSD + itemCargoShare + itemFreightShare;
+    const itemCustoms = itemCifUSD * (+o.customsDutyRate||0)/100;
+    const itemOther = other * prop;
+    const itemTotalCostUSD = itemCifUSD + itemCustoms + itemOther;
+    const itemTotalCostMVR = itemTotalCostUSD * xr;
+    const qty = +item.qty || 1;
+    const costPerUnitMVR = itemTotalCostMVR / qty;
+    const gst = +o.gstRate || +settings.gstRate || 6;
+    const margin = +o.profitMargin || +settings.profitMargin || 30;
+    const sellPrice = costPerUnitMVR * (1 + margin/100) * (1 + gst/100);
+    const profitPerUnit = sellPrice - costPerUnitMVR * (1 + gst/100);
+    const profitPct = sellPrice > 0 ? (profitPerUnit/sellPrice*100) : 0;
+    return {...item, itemTotalUSD, prop, itemTotalCostUSD, itemTotalCostMVR, costPerUnitMVR, sellPrice, profitPerUnit, profitPct};
+  });
+
+  return {invoiceSub, cargoFee, freight, shortFr, cifTotal, customs, other, grandTotalUSD, grandTotalMVR, calcItems};
+}
+
+// =================== ROUTING ===================
+const TITLES = {'dashboard':'Dashboard','new-order':'New Import Order','orders':'All Orders','order-detail':'Order Detail','calculator':'Quick Calculator','reports':'Reports','settings':'Settings'};
+let currentPage = 'dashboard';
+
+function routeFromHash() {
+  const h = window.location.hash.replace('#','') || 'dashboard';
+  currentPage = h;
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  const lnk = document.querySelector('a.nb[href="#'+h+'"]');
+  if (lnk) lnk.classList.add('active');
+  document.getElementById('topbar-title').textContent = TITLES[h] || h;
   const renders = {
-    dashboard: renderDashboard,
-    products: renderProducts,
-    'add-product': ()=>renderProductForm(null),
-    'edit-product': ()=>renderProductForm(data),
-    'cost-calc': renderCostCalc,
-    'price-calc': renderPriceCalc,
-    reports: renderReports,
-    suppliers: renderSuppliers,
-    settings: renderSettings
+    'dashboard': renderDashboard,
+    'new-order': () => renderOrderForm(null),
+    'orders': renderOrders,
+    'order-detail': renderOrderDetail,
+    'calculator': renderCalculator,
+    'reports': renderReports,
+    'settings': renderSettings
   };
-  const fn = renders[p];
-  document.getElementById('page').innerHTML = fn ? fn() : '';
-  if(p==='dashboard') setTimeout(initCharts,100);
-  if(window.location.hash !== '#'+p) history.replaceState(null,'','#'+p);
-  closeSidebar();
+  const fn = renders[h];
+  document.getElementById('pg').innerHTML = fn ? fn() : '';
+  if (h === 'dashboard') setTimeout(initCharts, 80);
+  document.getElementById('ov').classList.remove('show');
+  document.getElementById('sidebar').classList.remove('open');
   window.scrollTo(0,0);
 }
 
-function toggleSidebar(){
+window.addEventListener('hashchange', routeFromHash);
+document.getElementById('mbtn').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sb-overlay').classList.toggle('show');
-}
-function closeSidebar(){
+  document.getElementById('ov').classList.toggle('show');
+});
+document.getElementById('ov').addEventListener('click', () => {
   document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sb-overlay').classList.remove('show');
-}
+  document.getElementById('ov').classList.remove('show');
+});
 
-// ===== CALC HELPERS =====
-function calcProduct(p){
-  const wholesale = (+p.qty||0)*(+p.unitPrice||0);
-  const extras = (+p.transport||0)+(+p.loading||0)+(+p.packaging||0)+(+p.storage||0)+(+p.staff||0)+(+p.delivery||0)+(+p.other||0);
-  const totalCost = wholesale + extras;
-  const qty = +p.qty||1;
-  const costPerItem = totalCost / qty;
-  const gstAmt = costPerItem * (+p.gstRate||0)/100;
-  const costWithGst = costPerItem + gstAmt;
-  const margin = +p.profitMargin||0;
-  const sellPrice = costWithGst * (1 + margin/100);
-  const profitPerItem = sellPrice - costWithGst;
-  return {wholesale,extras,totalCost,costPerItem,gstAmt,costWithGst,sellPrice,profitPerItem,totalProfit:profitPerItem*qty};
-}
-
-// ===== DASHBOARD =====
-function renderDashboard(){
-  const totalProducts = products.length;
-  const totalPurchaseVal = products.reduce((s,p)=>{const c=calcProduct(p);return s+c.totalCost;},0);
-  const totalSellVal = products.reduce((s,p)=>{const c=calcProduct(p);return s+c.sellPrice*(+p.qty||1);},0);
-  const totalProfit = totalSellVal - totalPurchaseVal;
-  const lowProfit = products.filter(p=>calcProduct(p).profitPerItem/(calcProduct(p).sellPrice||1)*100 < (+settings.minMargin||10));
-
-  const recentProducts = [...products].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
-
-  // Category breakdown
-  const catMap = {};
-  products.forEach(p=>{ catMap[p.category||'Other']=(catMap[p.category||'Other']||0)+1; });
+// =================== DASHBOARD ===================
+function renderDashboard() {
+  const totalOrders = orders.length;
+  const totalCostMVR = orders.reduce((s,o) => s + calcOrder(o).grandTotalMVR, 0);
+  const totalSellMVR = orders.reduce((s,o) => {
+    const c = calcOrder(o);
+    return s + c.calcItems.reduce((ss,i)=>ss+(i.sellPrice*(+i.qty||0)),0);
+  }, 0);
+  const totalProfit = totalSellMVR - totalCostMVR;
+  const recentOrders = [...orders].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,5);
 
   return `
-  <div class="grid-4" style="margin-bottom:20px">
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(16,185,129,.15)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-      </div>
-      <div class="stat-val">${totalProducts}</div>
-      <div class="stat-lbl">Total Products</div>
-      <div class="stat-change up">${suppliers.length} suppliers</div>
+  <div class="g4">
+    <div class="sc">
+      <div class="sc-icon" style="background:rgba(13,148,136,.12)">📦</div>
+      <div class="sv">${totalOrders}</div>
+      <div class="sl">Total Import Orders</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(59,130,246,.15)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </div>
-      <div class="stat-val" style="font-size:16px">${fmt(totalPurchaseVal)}</div>
-      <div class="stat-lbl">Total Purchase Value</div>
-      <div class="stat-change" style="color:var(--t3)">${totalProducts} items tracked</div>
+    <div class="sc">
+      <div class="sc-icon" style="background:rgba(37,99,235,.12)">💵</div>
+      <div class="sv" style="font-size:15px">${fmv(totalCostMVR)}</div>
+      <div class="sl">Total Import Cost</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(245,158,11,.15)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-      </div>
-      <div class="stat-val" style="font-size:16px">${fmt(totalSellVal)}</div>
-      <div class="stat-lbl">Total Selling Value</div>
-      <div class="stat-change up">↑ ${pct(totalProfit,totalSellVal)}% margin</div>
+    <div class="sc">
+      <div class="sc-icon" style="background:rgba(217,119,6,.12)">🏷️</div>
+      <div class="sv" style="font-size:15px">${fmv(totalSellMVR)}</div>
+      <div class="sl">Total Selling Value</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(139,92,246,.15)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <div class="stat-val" style="font-size:16px;color:var(--accent)">${fmt(totalProfit)}</div>
-      <div class="stat-lbl">Expected Profit</div>
-      ${lowProfit.length?`<div class="stat-change down">⚠ ${lowProfit.length} low margin items</div>`:'<div class="stat-change up">All items healthy</div>'}
+    <div class="sc">
+      <div class="sc-icon" style="background:rgba(22,163,74,.12)">📈</div>
+      <div class="sv" style="font-size:15px;color:var(--green)">${fmv(totalProfit)}</div>
+      <div class="sl">Expected Profit</div>
     </div>
   </div>
 
-  <div class="grid-2" style="margin-bottom:20px">
+  <div class="g2">
     <div class="card">
-      <div class="card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Profit Overview
-      </div>
-      <div class="chart-wrap"><canvas id="profitChart"></canvas></div>
+      <div class="ct">📊 Cost vs Revenue</div>
+      <div class="ch"><canvas id="mainChart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-        By Category
-      </div>
-      <div class="chart-wrap"><canvas id="catChart"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid-2" style="margin-bottom:20px">
-    <div class="card">
-      <div class="card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/></svg>
-        Recent Products
-      </div>
-      ${recentProducts.length ? `
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Product</th><th>Category</th><th>Cost/Item</th><th>Sell Price</th><th>Margin</th></tr></thead>
-          <tbody>
-            ${recentProducts.map(p=>{
-              const c=calcProduct(p);
-              const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-              return `<tr>
-                <td><div style="font-weight:600;color:var(--t)">${p.name||'—'}</div><div style="font-size:10px;color:var(--t3)">${p.supplier||'—'}</div></td>
-                <td><span class="badge badge-blue">${p.category||'—'}</span></td>
-                <td>${fmt(c.costPerItem)}</td>
-                <td style="color:var(--accent);font-weight:600">${fmt(c.sellPrice)}</td>
-                <td><span class="badge ${+m>=settings.minMargin?'badge-green':'badge-red'}">${m}%</span></td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>` : `<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No products yet</div><div class="empty-sub">Add your first product to get started</div></div>`}
-    </div>
-    <div class="card">
-      <div class="card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-        Low Margin Alerts
-      </div>
-      ${lowProfit.length ? `
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${lowProfit.slice(0,5).map(p=>{
-          const c=calcProduct(p);
-          const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-          return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:8px">
-            <div>
-              <div style="font-size:13px;font-weight:600;color:var(--t)">${p.name}</div>
-              <div style="font-size:11px;color:var(--t3)">Margin: ${m}% (min ${settings.minMargin}%)</div>
-            </div>
-            <button class="btn btn-sm btn-secondary" onclick="navigate('edit-product',${JSON.stringify(p).replace(/"/g,'&quot;')})">Fix</button>
-          </div>`;
-        }).join('')}
-      </div>` : `<div class="empty"><div style="font-size:32px">✅</div><div class="empty-text">All products healthy</div><div class="empty-sub">Margins are above minimum threshold</div></div>`}
+      <div class="ct">📋 Recent Orders</div>
+      ${recentOrders.length ? recentOrders.map(o=>{
+        const c=calcOrder(o);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-size:13px;font-weight:600">${o.supplier||'—'}</div>
+            <div style="font-size:10px;color:var(--t3)">${o.invoiceNo||'—'} · ${o.date||'—'} · ${o.items?.length||0} sizes</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;font-weight:700;color:var(--accent)">${fmv(c.grandTotalMVR)}</div>
+            <a href="#order-detail" onclick="editingOrderId='${o.id}'" style="font-size:10px;color:var(--accent2);text-decoration:none">View →</a>
+          </div>
+        </div>`;
+      }).join('') : '<div class="empty"><div class="empty-icon">📦</div><div style="font-size:13px;font-weight:600">No orders yet</div><div style="font-size:12px;margin-top:4px"><a href="#new-order" style="color:var(--accent)">Create your first import order →</a></div></div>'}
     </div>
   </div>`;
 }
 
-// ===== CHARTS =====
-let chartInstances = {};
-function initCharts(){
-  destroyCharts();
-  const prods = products.slice(-8);
-
-  // Profit chart
-  const pc = document.getElementById('profitChart');
-  if(pc && prods.length){
-    chartInstances.profit = new Chart(pc,{
-      type:'bar',
-      data:{
-        labels:prods.map(p=>p.name?.slice(0,10)||'—'),
-        datasets:[
-          {label:'Cost',data:prods.map(p=>calcProduct(p).totalCost.toFixed(2)),backgroundColor:'rgba(59,130,246,.4)',borderColor:'#3b82f6',borderWidth:1.5,borderRadius:4},
-          {label:'Revenue',data:prods.map(p=>(calcProduct(p).sellPrice*(+p.qty||1)).toFixed(2)),backgroundColor:'rgba(16,185,129,.4)',borderColor:'#10b981',borderWidth:1.5,borderRadius:4}
-        ]
-      },
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#78716C',font:{size:11}}}},scales:{x:{ticks:{color:'#A8A29E',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},y:{ticks:{color:'#A8A29E',font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}}}}
-    });
-  } else if(pc){
-    pc.parentElement.innerHTML='<div class="empty" style="padding:40px 0"><div class="empty-icon">📊</div><div class="empty-sub">Add products to see chart</div></div>';
+let chartInst = {};
+function initCharts() {
+  Object.values(chartInst).forEach(c=>{try{c.destroy();}catch(e){}});
+  chartInst = {};
+  const el = document.getElementById('mainChart');
+  if (!el || !orders.length) {
+    if(el) el.parentElement.innerHTML='<div class="empty" style="padding:30px 0"><div class="empty-icon">📊</div><div>No data yet</div></div>';
+    return;
   }
-
-  // Category pie
-  const cc = document.getElementById('catChart');
-  if(cc && products.length){
-    const catMap={};
-    products.forEach(p=>catMap[p.category||'Other']=(catMap[p.category||'Other']||0)+1);
-    const labels=Object.keys(catMap), data=Object.values(catMap);
-    const colors=['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16','#ec4899','#6366f1'];
-    chartInstances.cat = new Chart(cc,{
-      type:'doughnut',
-      data:{labels,datasets:[{data,backgroundColor:colors.slice(0,labels.length),borderWidth:0,hoverOffset:4}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#78716C',font:{size:10},padding:8,boxWidth:10}}}}
-    });
-  } else if(cc){
-    cc.parentElement.innerHTML='<div class="empty" style="padding:40px 0"><div class="empty-icon">🍩</div><div class="empty-sub">No category data yet</div></div>';
-  }
-}
-function destroyCharts(){
-  Object.values(chartInstances).forEach(c=>{try{c.destroy();}catch(e){}});
-  chartInstances={};
+  const last6 = [...orders].sort((a,b)=>new Date(a.date||0)-new Date(b.date||0)).slice(-6);
+  chartInst.main = new Chart(el, {
+    type:'bar',
+    data:{
+      labels: last6.map(o=>o.supplier?.slice(0,8)||'—'),
+      datasets:[
+        {label:'Cost (MVR)',data:last6.map(o=>n2(calcOrder(o).grandTotalMVR)),backgroundColor:'rgba(37,99,235,.3)',borderColor:'#2563EB',borderWidth:1.5,borderRadius:4},
+        {label:'Revenue (MVR)',data:last6.map(o=>{const c=calcOrder(o);return n2(c.calcItems.reduce((s,i)=>s+i.sellPrice*(+i.qty||0),0));}),backgroundColor:'rgba(13,148,136,.3)',borderColor:'#0D9488',borderWidth:1.5,borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#78716C',font:{size:10}}}},scales:{x:{ticks:{color:'#A8A29E',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{color:'#A8A29E',font:{size:10}},grid:{color:'rgba(0,0,0,.04)'}}}}
+  });
 }
 
-// ===== PRODUCT FORM =====
-function renderProductForm(editProduct){
-  const p = editProduct || {};
-  const isEdit = !!p.id;
-  const gstR = p.gstRate ?? settings.gstRate;
-  const profM = p.profitMargin ?? settings.profitMargin;
+// =================== ORDER FORM ===================
+let formItems = [];
+
+function renderOrderForm(orderId) {
+  const o = orderId ? orders.find(x=>x.id===orderId) : null;
+  editingOrderId = orderId || null;
+  formItems = o ? JSON.parse(JSON.stringify(o.items||[])) : [
+    {id:UID(), name:'', size:'', qty:'', unitPriceUSD:'', weightKg:''}
+  ];
+  const s = settings;
 
   return `
-  <div style="max-width:860px;margin:0 auto">
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      Product Purchase Details
+  <div style="max-width:960px;margin:0 auto">
+  <!-- Invoice Details -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">🧾 Invoice Details</div>
+    <div class="fr fr4">
+      <div><label>Supplier / From</label><input id="f-supplier" value="${o?.supplier||''}" placeholder="e.g. Sparklora Trading Co."></div>
+      <div><label>Invoice Number</label><input id="f-invno" value="${o?.invoiceNo||''}" placeholder="MI2026521"></div>
+      <div><label>Invoice Date</label><input type="date" id="f-date" value="${o?.date||new Date().toISOString().split('T')[0]}"></div>
+      <div><label>Invoice Currency</label><select id="f-cur">
+        <option value="USD" ${(o?.invoiceCurrency||'USD')==='USD'?'selected':''}>USD – US Dollar</option>
+        <option value="CNY" ${o?.invoiceCurrency==='CNY'?'selected':''}>CNY – Chinese Yuan</option>
+        <option value="EUR" ${o?.invoiceCurrency==='EUR'?'selected':''}>EUR – Euro</option>
+      </select></div>
     </div>
-    <div class="form-row cols-3">
-      <div><label>Product Name *</label><input id="f-name" value="${p.name||''}" placeholder="e.g. Coca Cola 330ml" oninput="liveCalc()"></div>
-      <div><label>Category</label><select id="f-cat">${CATS.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
-      <div><label>Purchase Date</label><input type="date" id="f-date" value="${p.date||new Date().toISOString().split('T')[0]}"></div>
-    </div>
-    <div class="form-row cols-4">
-      <div><label>Quantity Bought *</label><input type="number" id="f-qty" value="${p.qty||''}" placeholder="100" min="1" oninput="liveCalc()"></div>
-      <div><label>Wholesale Unit Price *</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-unitprice" value="${p.unitPrice||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Total Wholesale Cost</label><input type="text" id="f-totalwholesale" readonly style="background:var(--bg);color:var(--accent);font-weight:700" value="${p.qty&&p.unitPrice?fmt((+p.qty)*(+p.unitPrice)):''}" placeholder="Auto-calculated"></div>
-      <div><label>Supplier / Wholesaler</label><input id="f-supplier" value="${p.supplier||''}" placeholder="Supplier name" list="supplier-list"></div>
-    </div>
-    <datalist id="supplier-list">${suppliers.map(s=>`<option value="${s.name}">`).join('')}</datalist>
-  </div>
-
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      Extra Costs
-    </div>
-    <div class="form-row cols-4">
-      <div><label>Transport</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-transport" value="${p.transport||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Loading/Unloading</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-loading" value="${p.loading||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Packaging</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-packaging" value="${p.packaging||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Storage</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-storage" value="${p.storage||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-    </div>
-    <div class="form-row cols-4">
-      <div><label>Staff Handling</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-staff" value="${p.staff||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Delivery Cost</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-delivery" value="${p.delivery||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Other Expenses</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="f-other" value="${p.other||''}" placeholder="0.00" step="0.01" oninput="liveCalc()"></div></div>
-      <div><label>Total Extra Costs</label><input type="text" id="f-totalextras" readonly style="background:var(--bg);color:var(--gold);font-weight:700" placeholder="Auto-calculated"></div>
+    <div class="fr fr4">
+      <div><label>Exchange Rate (to MVR)</label><input type="number" id="f-xr" value="${o?.exchangeRate||s.exchangeRate}" step="0.01" placeholder="15.42" oninput="liveCalcForm()"></div>
+      <div><label>GST Rate (%)</label><input type="number" id="f-gst" value="${o?.gstRate||s.gstRate}" step="0.5" placeholder="6" oninput="liveCalcForm()"></div>
+      <div><label>Profit Margin (%)</label><input type="number" id="f-margin" value="${o?.profitMargin||s.profitMargin}" step="1" placeholder="30" oninput="liveCalcForm()"></div>
+      <div><label>Notes / Category</label><input id="f-notes" value="${o?.notes||''}" placeholder="e.g. Toys - Dolls"></div>
     </div>
   </div>
 
-  <div class="grid-2" style="margin-bottom:16px">
+  <!-- Items Table -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="ct" style="margin-bottom:0">📋 Items (Products & Sizes)</div>
+      <button class="btn btn-s btn-sm" onclick="addFormItem()">+ Add Row</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="items-table" id="items-tbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th style="min-width:140px">Product Name</th>
+            <th style="min-width:90px">Size / Spec</th>
+            <th style="min-width:70px">Qty (pcs)</th>
+            <th style="min-width:110px">Unit Price (USD)</th>
+            <th style="min-width:110px">Total (USD)</th>
+            <th style="min-width:90px">Weight (KG)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="items-body"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5" style="text-align:right;font-size:11px;color:var(--t3);font-weight:600">INVOICE SUBTOTAL</td>
+            <td id="sub-total" style="color:var(--accent);font-size:13px;font-weight:800">—</td>
+            <td id="sub-weight" style="color:var(--t3);font-size:11px">—</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Import Costs -->
+  <div class="g2" style="margin-bottom:14px">
     <div class="card">
-      <div class="card-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        GST & Tax Settings
+      <div class="ct">🚢 Import & Freight Costs</div>
+      <div class="fr fr2">
+        <div>
+          <label>Cargo Service Fee (%)</label>
+          <div class="pfx"><span>%</span><input type="number" id="f-cargo" value="${o?.cargoFeeRate??s.cargoFeeRate}" step="0.5" placeholder="16" oninput="liveCalcForm()"></div>
+        </div>
+        <div>
+          <label>Cargo Fee Amount (Auto)</label>
+          <input id="f-cargoval" readonly placeholder="Auto-calculated">
+        </div>
       </div>
-      <div class="form-row cols-2">
-        <div><label>GST Rate (%)</label><input type="number" id="f-gst" value="${gstR}" step="0.1" min="0" max="100" oninput="liveCalc()"></div>
-        <div><label>Profit Margin (%)</label><input type="number" id="f-margin" value="${profM}" step="0.5" min="0" oninput="liveCalc()"></div>
+      <div class="fr fr2">
+        <div>
+          <label>Freight Rate (USD per KG)</label>
+          <div class="pfx"><span>$</span><input type="number" id="f-frperkg" value="${o?.freightPerKg??s.freightPerKg}" step="0.01" placeholder="3.62" oninput="liveCalcForm()"></div>
+        </div>
+        <div>
+          <label>Total Freight (Auto)</label>
+          <input id="f-frtotal" readonly placeholder="Auto-calculated">
+        </div>
       </div>
-      <div class="form-row cols-2">
-        <div><label>Notes</label><input id="f-notes" value="${p.notes||''}" placeholder="Optional notes"></div>
-        <div><label>Unit / Weight</label><input id="f-unit" value="${p.unit||''}" placeholder="e.g. kg, pcs, ml"></div>
+      <div class="fr fr2">
+        <div>
+          <label>Short Freight / Other (USD)</label>
+          <div class="pfx"><span>$</span><input type="number" id="f-shortfr" value="${o?.shortFreight||0}" step="0.01" placeholder="12.00" oninput="liveCalcForm()"></div>
+        </div>
+        <div>
+          <label>Other Costs (USD)</label>
+          <div class="pfx"><span>$</span><input type="number" id="f-other" value="${o?.otherCosts||0}" step="0.01" placeholder="0.00" oninput="liveCalcForm()"></div>
+        </div>
       </div>
     </div>
-    <div class="card" id="calc-preview">
-      <div class="card-title">⚡ Live Calculation</div>
-      <div id="calc-display" style="font-size:12px;color:var(--t3);text-align:center;padding:20px">Fill in product details to see calculation</div>
+    <div class="card">
+      <div class="ct">🛃 Customs & Duties (Maldives)</div>
+      <div class="fr fr2">
+        <div>
+          <label>Import Duty Rate (%)</label>
+          <div class="pfx"><span>%</span><input type="number" id="f-customs" value="${o?.customsDutyRate??s.customsDutyRate}" step="0.5" placeholder="20" oninput="liveCalcForm()"></div>
+        </div>
+        <div>
+          <label>Customs Amount (Auto)</label>
+          <input id="f-customsval" readonly placeholder="Auto-calculated">
+        </div>
+      </div>
+      <div style="background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2);border-radius:8px;padding:10px;margin-top:8px;font-size:11px;color:var(--gold)">
+        <strong>📌 Maldives Import Duty</strong><br>
+        Toys & dolls: typically 20% | Clothing: 20% | Electronics: 0–15%<br>
+        Customs is calculated on CIF value (Cost + Insurance + Freight)
+      </div>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">📐 Size-Based Pricing (Optional)</div>
-    <p style="font-size:12px;color:var(--t3);margin-bottom:12px">Set different selling prices per size. Leave blank to skip.</p>
-    <div class="size-grid">
-      ${['Small','Medium','Large','Extra Large','Custom'].map((s,i)=>`
-        <div class="size-item">
-          <label>${s}</label>
-          <input type="number" id="f-size-${i}" value="${(p.sizePrices||[])[i]||''}" placeholder="Price" step="0.01" oninput="liveCalc()">
-        </div>`).join('')}
-    </div>
+  <!-- Live Calculation Preview -->
+  <div class="card" style="margin-bottom:14px" id="calc-preview">
+    <div class="ct">⚡ Live Cost Breakdown</div>
+    <div style="text-align:center;padding:20px;color:var(--t3);font-size:13px">Add items above to see cost breakdown</div>
+  </div>
+
+  <!-- Size Price Results -->
+  <div class="card" style="margin-bottom:14px" id="size-results">
+    <div class="ct">🏷️ Selling Price Per Size</div>
+    <div style="text-align:center;padding:20px;color:var(--t3);font-size:13px">Add items and costs to see per-size prices</div>
   </div>
 
   <div style="display:flex;gap:10px;justify-content:flex-end;padding-bottom:20px">
-    <button class="btn btn-secondary" onclick="navigate('products')">Cancel</button>
-    <button class="btn btn-primary" onclick="${isEdit?`updateProduct('${p.id}')`:'saveProduct()'}">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      ${isEdit?'Update Product':'Save Product'}
+    <a class="btn btn-s" href="#orders">Cancel</a>
+    <button class="btn btn-p" onclick="saveOrder()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      ${orderId ? 'Update Order' : 'Save Order'}
     </button>
   </div>
   </div>`;
 }
 
-function liveCalc(){
-  const qty=+document.getElementById('f-qty')?.value||0;
-  const unitPrice=+document.getElementById('f-unitprice')?.value||0;
-  const wholesale=qty*unitPrice;
-  const wholesaleEl=document.getElementById('f-totalwholesale');
-  if(wholesaleEl) wholesaleEl.value = wholesale?fmt(wholesale):'';
-
-  const transport=+document.getElementById('f-transport')?.value||0;
-  const loading=+document.getElementById('f-loading')?.value||0;
-  const packaging=+document.getElementById('f-packaging')?.value||0;
-  const storage=+document.getElementById('f-storage')?.value||0;
-  const staff=+document.getElementById('f-staff')?.value||0;
-  const delivery=+document.getElementById('f-delivery')?.value||0;
-  const other=+document.getElementById('f-other')?.value||0;
-  const extras=transport+loading+packaging+storage+staff+delivery+other;
-  const extrasEl=document.getElementById('f-totalextras');
-  if(extrasEl) extrasEl.value=extras?fmt(extras):'';
-
-  const totalCost=wholesale+extras;
-  const costPerItem=qty?totalCost/qty:0;
-  const gst=+document.getElementById('f-gst')?.value||0;
-  const gstAmt=costPerItem*gst/100;
-  const costWithGst=costPerItem+gstAmt;
-  const margin=+document.getElementById('f-margin')?.value||0;
-  const sellPrice=costWithGst*(1+margin/100);
-  const profit=sellPrice-costWithGst;
-  const totalProfit=profit*qty;
-
-  const display=document.getElementById('calc-display');
-  if(!display) return;
-
-  if(!qty||!unitPrice){
-    display.innerHTML='<div style="text-align:center;padding:20px;color:var(--t3)">Fill in Quantity and Unit Price to see calculation</div>';
-    return;
-  }
-
-  display.innerHTML=`
-    <div class="calc-box">
-      <div class="calc-row"><span class="calc-lbl">Wholesale Cost</span><span class="calc-val">${fmt(wholesale)}</span></div>
-      <div class="calc-row"><span class="calc-lbl">Extra Costs</span><span class="calc-val" style="color:var(--gold)">${fmt(extras)}</span></div>
-      <div class="calc-row total"><span class="calc-lbl">Total Cost</span><span class="calc-val">${fmt(totalCost)}</span></div>
-    </div>
-    <div class="calc-box">
-      <div class="calc-row"><span class="calc-lbl">Cost Per Item</span><span class="calc-val">${fmt(costPerItem)}</span></div>
-      <div class="calc-row"><span class="calc-lbl">GST (${gst}%)</span><span class="calc-val">+${fmt(gstAmt)}</span></div>
-      <div class="calc-row"><span class="calc-lbl">Cost + GST</span><span class="calc-val">${fmt(costWithGst)}</span></div>
-      <div class="calc-row total"><span class="calc-lbl">Selling Price (${margin}% margin)</span><span class="calc-val" style="color:var(--accent)">${fmt(sellPrice)}</span></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-      <div class="highlight-box">
-        <div class="highlight-val" style="font-size:18px">${fmt(profit)}</div>
-        <div class="highlight-lbl">Profit per item</div>
-      </div>
-      <div class="highlight-box" style="background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(239,68,68,.05));border-color:rgba(245,158,11,.2)">
-        <div class="highlight-val" style="font-size:18px;color:var(--gold)">${fmt(totalProfit)}</div>
-        <div class="highlight-lbl">Total expected profit</div>
-      </div>
-    </div>`;
+function renderItemsBody() {
+  const tbody = document.getElementById('items-body');
+  if (!tbody) return;
+  tbody.innerHTML = formItems.map((item, i) => `
+    <tr id="row-${item.id}">
+      <td style="color:var(--t3);font-size:11px">${i+1}</td>
+      <td><input value="${item.name||''}" placeholder="e.g. Doll" oninput="formItems[${i}].name=this.value"></td>
+      <td><input value="${item.size||''}" placeholder="e.g. 45cm" oninput="formItems[${i}].size=this.value;liveCalcForm()"></td>
+      <td><input type="number" value="${item.qty||''}" placeholder="0" min="1" oninput="formItems[${i}].qty=this.value;liveCalcForm()"></td>
+      <td><input type="number" value="${item.unitPriceUSD||''}" placeholder="0.00" step="0.01" oninput="formItems[${i}].unitPriceUSD=this.value;liveCalcForm()"></td>
+      <td style="color:var(--accent);font-weight:700;font-size:13px">${(+item.qty||0)*(+item.unitPriceUSD||0)?fusd((+item.qty||0)*(+item.unitPriceUSD||0)):'—'}</td>
+      <td><input type="number" value="${item.weightKg||''}" placeholder="0.00" step="0.1" oninput="formItems[${i}].weightKg=this.value;liveCalcForm()"></td>
+      <td><button class="btn btn-d btn-sm" onclick="removeFormItem('${item.id}')">×</button></td>
+    </tr>`).join('');
 }
 
-function getFormData(){
-  const sizePrices = [0,1,2,3,4].map(i=>+document.getElementById(`f-size-${i}`)?.value||0);
+function addFormItem() {
+  formItems.push({id:UID(),name:'',size:'',qty:'',unitPriceUSD:'',weightKg:''});
+  renderItemsBody();
+  liveCalcForm();
+}
+
+function removeFormItem(id) {
+  if (formItems.length <= 1) { toast('Need at least one item','e'); return; }
+  formItems = formItems.filter(i=>i.id!==id);
+  renderItemsBody();
+  liveCalcForm();
+}
+
+function liveCalcForm() {
+  // Update totals row
+  const sub = formItems.reduce((s,i)=>s+(+i.qty||0)*(+i.unitPriceUSD||0),0);
+  const wt  = formItems.reduce((s,i)=>s+(+i.weightKg||0),0);
+  const subEl = document.getElementById('sub-total');
+  const wtEl  = document.getElementById('sub-weight');
+  if (subEl) subEl.textContent = sub ? fusd(sub) : '—';
+  if (wtEl)  wtEl.textContent  = wt  ? wt.toFixed(1)+' KG' : '—';
+
+  const xr       = +document.getElementById('f-xr')?.value || 15.42;
+  const cargoR   = +document.getElementById('f-cargo')?.value || 0;
+  const frPerKg  = +document.getElementById('f-frperkg')?.value || 0;
+  const shortFr  = +document.getElementById('f-shortfr')?.value || 0;
+  const customsR = +document.getElementById('f-customs')?.value || 0;
+  const other    = +document.getElementById('f-other')?.value || 0;
+  const gst      = +document.getElementById('f-gst')?.value || 6;
+  const margin   = +document.getElementById('f-margin')?.value || 30;
+
+  const cargoFee  = sub * cargoR/100;
+  const freight   = frPerKg * wt;
+  const cif       = sub + cargoFee + freight + shortFr;
+  const customs   = cif * customsR/100;
+  const grandUSD  = cif + customs + other;
+  const grandMVR  = grandUSD * xr;
+
+  // Update auto fields
+  const cfv = document.getElementById('f-cargoval');
+  const ftv = document.getElementById('f-frtotal');
+  const ctv = document.getElementById('f-customsval');
+  if(cfv) cfv.value = cargoFee ? fusd(cargoFee) : '';
+  if(ftv) ftv.value = freight  ? fusd(freight)  : '';
+  if(ctv) ctv.value = customs  ? fusd(customs)  : '';
+
+  // Update items body
+  renderItemsBody();
+
+  if (!sub) return;
+
+  // Cost breakdown card
+  const prev = document.getElementById('calc-preview');
+  if (prev) prev.innerHTML = `
+    <div class="ct">⚡ Live Cost Breakdown</div>
+    <div class="g3">
+      <div class="cbox">
+        <div class="crow"><span class="cl">Invoice Subtotal</span><span class="cv">${fusd(sub)}</span></div>
+        <div class="crow"><span class="cl">Cargo Service Fee (${cargoR}%)</span><span class="cv">${fusd(cargoFee)}</span></div>
+        <div class="crow"><span class="cl">Freight (${wt.toFixed(1)} KG × $${frPerKg})</span><span class="cv">${fusd(freight)}</span></div>
+        <div class="crow"><span class="cl">Short Freight</span><span class="cv">${fusd(shortFr)}</span></div>
+        <div class="crow tot"><span>CIF Total</span><span class="cv">${fusd(cif)}</span></div>
+      </div>
+      <div class="cbox">
+        <div class="crow"><span class="cl">Customs Duty (${customsR}%)</span><span class="cv" style="color:var(--gold)">${fusd(customs)}</span></div>
+        <div class="crow"><span class="cl">Other Costs</span><span class="cv">${fusd(other)}</span></div>
+        <div class="crow tot"><span>Grand Total (USD)</span><span class="cv">${fusd(grandUSD)}</span></div>
+        <div class="crow tot"><span>Grand Total (MVR)</span><span class="cv" style="font-size:15px">${fmv(grandMVR)}</span></div>
+      </div>
+      <div>
+        <div class="hbox" style="margin-bottom:8px">
+          <div class="hval">${fmv(grandMVR)}</div>
+          <div class="hlbl">Total Cost in MVR</div>
+        </div>
+        <div class="hbox" style="background:linear-gradient(135deg,rgba(217,119,6,.08),rgba(220,38,38,.04));border-color:rgba(217,119,6,.2)">
+          <div class="hval" style="color:var(--gold)">${fmv(grandMVR*(1+margin/100)*(1+gst/100))}</div>
+          <div class="hlbl">Est. Total Revenue (at ${margin}% margin + ${gst}% GST)</div>
+        </div>
+      </div>
+    </div>`;
+
+  // Size price results
+  const srEl = document.getElementById('size-results');
+  if (!srEl) return;
+
+  // Group items by product name for display
+  const calcItems = formItems.map(item => {
+    const itemTotalUSD = (+item.qty||0) * (+item.unitPriceUSD||0);
+    const prop = sub > 0 ? itemTotalUSD / sub : 0;
+    const itemCargoShare = cargoFee * prop;
+    const itemFreightShare = (freight + shortFr) * prop;
+    const itemCifUSD = itemTotalUSD + itemCargoShare + itemFreightShare;
+    const itemCustoms = itemCifUSD * customsR/100;
+    const itemOther = other * prop;
+    const itemTotalCostUSD = itemCifUSD + itemCustoms + itemOther;
+    const itemTotalCostMVR = itemTotalCostUSD * xr;
+    const qty = +item.qty || 1;
+    const costPerUnitMVR = itemTotalCostMVR / qty;
+    const sellPrice = costPerUnitMVR * (1 + margin/100) * (1 + gst/100);
+    const profitPerUnit = sellPrice - costPerUnitMVR * (1 + gst/100);
+    const gstAmtOnSell = sellPrice / (1 + gst/100) * (gst/100);
+    return {...item, itemTotalUSD, itemTotalCostUSD, itemTotalCostMVR, costPerUnitMVR, sellPrice, profitPerUnit, gstAmtOnSell};
+  }).filter(i => i.itemTotalUSD > 0);
+
+  if (!calcItems.length) return;
+
+  // Group by product name
+  const groups = {};
+  calcItems.forEach(i => {
+    const k = i.name || 'Product';
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(i);
+  });
+
+  let html = '<div class="ct">🏷️ Selling Price Per Size</div>';
+  Object.entries(groups).forEach(([name, items]) => {
+    html += `<div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:8px;padding:6px 10px;background:var(--s2);border-radius:7px;border-left:3px solid var(--accent)">📦 ${name}</div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--s2)">
+          <th style="padding:8px 12px;text-align:left;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Size</th>
+          <th style="padding:8px 12px;text-align:center;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Qty</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Invoice (USD)</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Total Cost (MVR)</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Cost/Unit (MVR)</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">GST (${gst}%)</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em">Sell Price (MVR)</th>
+          <th style="padding:8px 12px;text-align:right;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Profit/Unit</th>
+        </tr></thead>
+        <tbody>
+          ${items.map(i=>`<tr style="border-top:1px solid var(--border)">
+            <td style="padding:10px 12px;font-weight:700;color:var(--t)">${i.size||'—'}</td>
+            <td style="padding:10px 12px;text-align:center;color:var(--t3)">${i.qty} pcs</td>
+            <td style="padding:10px 12px;text-align:right;color:var(--t3)">${fusd(i.itemTotalUSD)}</td>
+            <td style="padding:10px 12px;text-align:right;color:var(--t2)">${fmv(i.itemTotalCostMVR)}</td>
+            <td style="padding:10px 12px;text-align:right;color:var(--accent);font-weight:700">${fmv(i.costPerUnitMVR)}</td>
+            <td style="padding:10px 12px;text-align:right;color:var(--gold)">${fmv(i.gstAmtOnSell)}</td>
+            <td style="padding:10px 12px;text-align:right;font-size:15px;font-weight:800;color:var(--green)">${fmv(i.sellPrice)}</td>
+            <td style="padding:10px 12px;text-align:right;color:var(--green)">${fmv(i.profitPerUnit)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  });
+
+  srEl.innerHTML = html;
+}
+
+function getFormOrder() {
   return {
-    name:document.getElementById('f-name')?.value?.trim(),
-    category:document.getElementById('f-cat')?.value,
-    qty:+document.getElementById('f-qty')?.value||0,
-    unitPrice:+document.getElementById('f-unitprice')?.value||0,
-    supplier:document.getElementById('f-supplier')?.value?.trim(),
-    date:document.getElementById('f-date')?.value,
-    transport:+document.getElementById('f-transport')?.value||0,
-    loading:+document.getElementById('f-loading')?.value||0,
-    packaging:+document.getElementById('f-packaging')?.value||0,
-    storage:+document.getElementById('f-storage')?.value||0,
-    staff:+document.getElementById('f-staff')?.value||0,
-    delivery:+document.getElementById('f-delivery')?.value||0,
-    other:+document.getElementById('f-other')?.value||0,
-    gstRate:+document.getElementById('f-gst')?.value||0,
-    profitMargin:+document.getElementById('f-margin')?.value||0,
-    notes:document.getElementById('f-notes')?.value?.trim(),
-    unit:document.getElementById('f-unit')?.value?.trim(),
-    sizePrices
+    id: editingOrderId || UID(),
+    supplier: document.getElementById('f-supplier')?.value?.trim(),
+    invoiceNo: document.getElementById('f-invno')?.value?.trim(),
+    date: document.getElementById('f-date')?.value,
+    invoiceCurrency: document.getElementById('f-cur')?.value || 'USD',
+    exchangeRate: +document.getElementById('f-xr')?.value || 15.42,
+    gstRate: +document.getElementById('f-gst')?.value || 6,
+    profitMargin: +document.getElementById('f-margin')?.value || 30,
+    notes: document.getElementById('f-notes')?.value?.trim(),
+    cargoFeeRate: +document.getElementById('f-cargo')?.value || 0,
+    freightPerKg: +document.getElementById('f-frperkg')?.value || 0,
+    shortFreight: +document.getElementById('f-shortfr')?.value || 0,
+    otherCosts: +document.getElementById('f-other')?.value || 0,
+    customsDutyRate: +document.getElementById('f-customs')?.value || 0,
+    totalWeightKg: formItems.reduce((s,i)=>s+(+i.weightKg||0),0),
+    items: formItems.map(i=>({...i, qty:+i.qty||0, unitPriceUSD:+i.unitPriceUSD||0, weightKg:+i.weightKg||0}))
   };
 }
 
-function saveProduct(){
-  const d=getFormData();
-  if(!d.name){toast('Enter a product name','error');return;}
-  if(!d.qty||!d.unitPrice){toast('Enter quantity and unit price','error');return;}
-  const p={...d,id:uid()};
-  products.unshift(p);
-  // Auto-add supplier
-  if(d.supplier && !suppliers.find(s=>s.name===d.supplier)){
-    suppliers.unshift({id:uid(),name:d.supplier,added:new Date().toISOString().split('T')[0]});
-  }
-  saveData();
-  toast(`"${d.name}" saved successfully!`,'success');
-  navigate('products');
+function saveOrder() {
+  const o = getFormOrder();
+  if (!o.supplier) { toast('Enter supplier name','e'); return; }
+  if (!o.items.some(i=>i.qty&&i.unitPriceUSD)) { toast('Add at least one item with qty and price','e'); return; }
+  if (editingOrderId) {
+    const idx = orders.findIndex(x=>x.id===editingOrderId);
+    if (idx>=0) orders[idx] = o; else orders.unshift(o);
+  } else { orders.unshift(o); }
+  save();
+  toast(`Order saved — ${o.items.length} items`,'s');
+  editingOrderId = o.id;
+  window.location.hash = '#order-detail';
 }
 
-function updateProduct(id){
-  const d=getFormData();
-  if(!d.name){toast('Enter a product name','error');return;}
-  const idx=products.findIndex(p=>p.id===id);
-  if(idx<0){toast('Product not found','error');return;}
-  products[idx]={...products[idx],...d};
-  saveData();
-  toast('Product updated!','success');
-  navigate('products');
-}
+// =================== ORDER DETAIL ===================
+function renderOrderDetail() {
+  const o = orders.find(x=>x.id===editingOrderId);
+  if (!o) return `<div class="empty"><div class="empty-icon">❌</div><div>Order not found</div><a href="#orders" style="color:var(--accent)">← Back to orders</a></div>`;
+  const c = calcOrder(o);
 
-function deleteProduct(id){
-  if(!confirm('Delete this product?')) return;
-  products=products.filter(p=>p.id!==id);
-  saveData();
-  toast('Product deleted','info');
-  navigate('products');
-}
+  let groupHtml = '';
+  const groups = {};
+  c.calcItems.forEach(i => {
+    const k = i.name || 'Product';
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(i);
+  });
 
-// ===== PRODUCTS LIST =====
-function renderProducts(){
-  const q = window._prodSearch||'';
-  const cat = window._prodCat||'';
-  let filtered = products.filter(p=>
-    (!q || p.name?.toLowerCase().includes(q.toLowerCase()) || p.supplier?.toLowerCase().includes(q.toLowerCase())) &&
-    (!cat || p.category===cat)
-  );
+  Object.entries(groups).forEach(([name, items]) => {
+    groupHtml += `
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:8px;padding:6px 10px;background:var(--s2);border-radius:7px;border-left:3px solid var(--accent)">📦 ${name}</div>
+      <div class="tw"><table>
+        <thead><tr>
+          <th>Size / Spec</th><th>Qty</th><th>Unit Price (USD)</th>
+          <th>Invoice Total</th><th>Import Share</th><th>Total Cost</th>
+          <th>Cost/Unit (MVR)</th><th>GST (${o.gstRate}%)</th>
+          <th style="color:var(--green)">Sell Price (MVR)</th><th>Profit/Unit</th>
+        </tr></thead>
+        <tbody>
+          ${items.map(i=>`<tr>
+            <td style="font-weight:700">${i.size||'—'}</td>
+            <td>${i.qty} pcs</td>
+            <td>${fusd(i.unitPriceUSD)}</td>
+            <td>${fusd(i.itemTotalUSD)}</td>
+            <td style="color:var(--gold)">${fusd(i.itemTotalCostUSD - i.itemTotalUSD)}</td>
+            <td>${fmv(i.itemTotalCostMVR)}</td>
+            <td style="color:var(--accent);font-weight:700">${fmv(i.costPerUnitMVR)}</td>
+            <td style="color:var(--gold)">${fmv(i.sellPrice/(1+o.gstRate/100)*(o.gstRate/100))}</td>
+            <td style="font-size:15px;font-weight:800;color:var(--green)">${fmv(i.sellPrice)}</td>
+            <td style="color:var(--green)">${fmv(i.profitPerUnit)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  });
 
   return `
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-    <input style="flex:1;min-width:200px;max-width:320px" placeholder="🔍 Search products..." value="${q}" oninput="window._prodSearch=this.value;navigate('products')" />
-    <select style="width:160px" onchange="window._prodCat=this.value;navigate('products')">
-      <option value="">All Categories</option>
-      ${CATS.map(c=>`<option value="${c}" ${cat===c?'selected':''}>${c}</option>`).join('')}
-    </select>
-    <button class="btn btn-primary" onclick="navigate('add-product')">+ Add Product</button>
+  <div style="max-width:1000px;margin:0 auto">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+    <a href="#orders" class="btn btn-s btn-sm">← Orders</a>
+    <div style="flex:1">
+      <div style="font-size:16px;font-weight:800">${o.supplier||'—'}</div>
+      <div style="font-size:12px;color:var(--t3)">${o.invoiceNo||'—'} · ${o.date||'—'} · ${o.notes||''}</div>
+    </div>
+    <a href="#new-order" onclick="editingOrderId='${o.id}';loadEditOrder('${o.id}')" class="btn btn-s btn-sm">✏️ Edit</a>
+    <button class="btn btn-s btn-sm" onclick="exportOrderPDF('${o.id}')">📄 PDF</button>
+    <button class="btn btn-s btn-sm" onclick="exportOrderExcel('${o.id}')">📊 Excel</button>
+    <button class="btn btn-d btn-sm" onclick="deleteOrder('${o.id}')">🗑 Delete</button>
   </div>
-  <div class="tbl-wrap">
+
+  <div class="g4" style="margin-bottom:14px">
+    <div class="sc"><div class="sl">Invoice Subtotal</div><div class="sv" style="font-size:15px">${fusd(c.invoiceSub)}</div></div>
+    <div class="sc"><div class="sl">Import Costs</div><div class="sv" style="font-size:15px;color:var(--gold)">${fusd(c.grandTotalUSD - c.invoiceSub)}</div></div>
+    <div class="sc"><div class="sl">Grand Total (USD)</div><div class="sv" style="font-size:15px">${fusd(c.grandTotalUSD)}</div></div>
+    <div class="sc"><div class="sl">Grand Total (MVR)</div><div class="sv" style="font-size:15px;color:var(--accent)">${fmv(c.grandTotalMVR)}</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="ct">💰 Cost Breakdown</div>
+      <div class="cbox">
+        <div class="crow"><span class="cl">Invoice Subtotal</span><span class="cv">${fusd(c.invoiceSub)}</span></div>
+        <div class="crow"><span class="cl">Cargo Service Fee (${o.cargoFeeRate}%)</span><span class="cv">${fusd(c.cargoFee)}</span></div>
+        <div class="crow"><span class="cl">Freight (${o.totalWeightKg||0}kg × $${o.freightPerKg})</span><span class="cv">${fusd(c.freight)}</span></div>
+        <div class="crow"><span class="cl">Short Freight</span><span class="cv">${fusd(c.shortFr)}</span></div>
+        <div class="crow"><span class="cl">CIF Total</span><span class="cv">${fusd(c.cifTotal)}</span></div>
+        <div class="crow"><span class="cl">Customs Duty (${o.customsDutyRate}%)</span><span class="cv" style="color:var(--gold)">${fusd(c.customs)}</span></div>
+        <div class="crow"><span class="cl">Other</span><span class="cv">${fusd(c.other)}</span></div>
+        <div class="crow tot"><span>Grand Total USD</span><span class="cv">${fusd(c.grandTotalUSD)}</span></div>
+        <div class="crow tot"><span>Grand Total MVR (×${o.exchangeRate})</span><span class="cv">${fmv(c.grandTotalMVR)}</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">📊 Revenue Summary</div>
+      ${c.calcItems.length ? `
+      <div class="cbox">
+        ${c.calcItems.map(i=>`<div class="crow">
+          <span class="cl">${i.name||'—'} ${i.size||''} × ${i.qty}</span>
+          <span class="cv" style="color:var(--green)">${fmv(i.sellPrice)} × ${i.qty} = ${fmv(i.sellPrice*(+i.qty||0))}</span>
+        </div>`).join('')}
+        <div class="crow tot">
+          <span>Total Revenue</span>
+          <span class="cv">${fmv(c.calcItems.reduce((s,i)=>s+i.sellPrice*(+i.qty||0),0))}</span>
+        </div>
+        <div class="crow tot">
+          <span>Expected Profit</span>
+          <span class="cv" style="color:var(--green)">${fmv(c.calcItems.reduce((s,i)=>s+i.profitPerUnit*(+i.qty||0),0))}</span>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>
+
+  ${groupHtml}
+  </div>`;
+}
+
+function loadEditOrder(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o) return;
+  editingOrderId = id;
+  formItems = JSON.parse(JSON.stringify(o.items||[]));
+  setTimeout(()=>{
+    renderItemsBody();
+    liveCalcForm();
+  }, 100);
+}
+
+function deleteOrder(id) {
+  if (!confirm('Delete this order?')) return;
+  orders = orders.filter(o=>o.id!==id);
+  save();
+  toast('Order deleted','i');
+  window.location.hash = '#orders';
+}
+
+// =================== ORDERS LIST ===================
+function renderOrders() {
+  return `
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:700;flex:1">All Import Orders (${orders.length})</div>
+    <a href="#new-order" class="btn btn-p btn-sm">+ New Order</a>
+  </div>
+  ${orders.length ? `
+  <div class="tw">
     <table>
-      <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Qty</th><th>Wholesale</th><th>Cost/Item</th><th>GST</th><th>Sell Price</th><th>Margin</th><th>Profit</th><th>Actions</th></tr></thead>
+      <thead><tr>
+        <th>#</th><th>Supplier</th><th>Invoice</th><th>Date</th><th>Items</th>
+        <th>Invoice (USD)</th><th>Total Cost (MVR)</th><th>Revenue (MVR)</th><th>Profit</th><th>Actions</th>
+      </tr></thead>
       <tbody>
-        ${filtered.length ? filtered.map((p,i)=>{
-          const c=calcProduct(p);
-          const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-          const isLow=+m<(settings.minMargin||10);
+        ${orders.map((o,i)=>{
+          const c=calcOrder(o);
+          const rev=c.calcItems.reduce((s,i)=>s+i.sellPrice*(+i.qty||0),0);
+          const prof=c.calcItems.reduce((s,i)=>s+i.profitPerUnit*(+i.qty||0),0);
           return `<tr>
             <td style="color:var(--t3)">${i+1}</td>
+            <td style="font-weight:600;color:var(--t)">${o.supplier||'—'}<div style="font-size:10px;color:var(--t3)">${o.notes||''}</div></td>
+            <td style="color:var(--t3)">${o.invoiceNo||'—'}</td>
+            <td style="color:var(--t3)">${o.date||'—'}</td>
+            <td><span class="badge bb">${o.items?.length||0} sizes</span></td>
+            <td>${fusd(c.invoiceSub)}</td>
+            <td style="color:var(--accent);font-weight:700">${fmv(c.grandTotalMVR)}</td>
+            <td style="color:var(--green)">${fmv(rev)}</td>
+            <td style="color:var(--green);font-weight:600">${fmv(prof)}</td>
             <td>
-              <div style="font-weight:600;color:var(--t)">${p.name||'—'}</div>
-              <div style="font-size:10px;color:var(--t3)">${p.supplier||'—'} · ${p.date||'—'}</div>
-            </td>
-            <td><span class="badge badge-blue">${p.category||'—'}</span></td>
-            <td>${p.qty||0} ${p.unit||'pcs'}</td>
-            <td>${fmt(c.wholesale)}</td>
-            <td>${fmt(c.costPerItem)}</td>
-            <td style="color:var(--t3)">${p.gstRate||0}%</td>
-            <td style="color:var(--accent);font-weight:700">${fmt(c.sellPrice)}</td>
-            <td><span class="badge ${isLow?'badge-red':'badge-green'}">${m}%</span></td>
-            <td style="color:var(--gold)">${fmt(c.totalProfit)}</td>
-            <td>
-              <div style="display:flex;gap:6px">
-                <button class="btn btn-sm btn-secondary" onclick="navigate('edit-product',${JSON.stringify(p).replace(/"/g,'&quot;')})">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">Del</button>
+              <div style="display:flex;gap:5px">
+                <a href="#order-detail" class="btn btn-s btn-sm" onclick="editingOrderId='${o.id}'">View</a>
+                <a href="#new-order" class="btn btn-s btn-sm" onclick="editingOrderId='${o.id}';loadEditOrder('${o.id}')">Edit</a>
+                <button class="btn btn-d btn-sm" onclick="deleteOrder('${o.id}')">Del</button>
               </div>
             </td>
           </tr>`;
-        }).join('') : `<tr><td colspan="11"><div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No products found</div></div></td></tr>`}
+        }).join('')}
       </tbody>
     </table>
-  </div>
-  <div style="margin-top:10px;font-size:11px;color:var(--t3)">${filtered.length} of ${products.length} products</div>`;
+  </div>` : `<div class="empty"><div class="empty-icon">📦</div><div style="font-size:14px;font-weight:600;margin-bottom:8px">No orders yet</div><a href="#new-order" class="btn btn-p">+ Create First Import Order</a></div>`}`;
 }
 
-// ===== COST CALCULATOR (Standalone) =====
-function renderCostCalc(){
+// =================== CALCULATOR ===================
+function renderCalculator() {
   return `
   <div style="max-width:680px;margin:0 auto">
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">🧮 Quick Cost Calculator</div>
-    <p style="font-size:12px;color:var(--t3);margin-bottom:16px">Calculate the real cost price without saving a product.</p>
-    <div class="form-row cols-3">
-      <div><label>Quantity</label><input type="number" id="cc-qty" placeholder="100" oninput="doCalc()"></div>
-      <div><label>Wholesale Unit Price</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-unit" placeholder="0.00" step="0.01" oninput="doCalc()"></div></div>
-      <div><label>GST Rate (%)</label><input type="number" id="cc-gst" value="${settings.gstRate}" step="0.1" oninput="doCalc()"></div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">🧮 Quick Import Cost Calculator</div>
+    <div class="fr fr3">
+      <div><label>Unit Price (USD)</label><div class="pfx"><span>$</span><input type="number" id="c-price" placeholder="2.29" step="0.01" oninput="qCalc()"></div></div>
+      <div><label>Quantity</label><input type="number" id="c-qty" placeholder="15" oninput="qCalc()"></div>
+      <div><label>Exchange Rate (USD→MVR)</label><input type="number" id="c-xr" value="${settings.exchangeRate}" step="0.01" oninput="qCalc()"></div>
     </div>
-    <div class="section-title">Extra Costs</div>
-    <div class="form-row cols-4">
-      <div><label>Transport</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-t" placeholder="0" oninput="doCalc()"></div></div>
-      <div><label>Loading</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-l" placeholder="0" oninput="doCalc()"></div></div>
-      <div><label>Packaging</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-p" placeholder="0" oninput="doCalc()"></div></div>
-      <div><label>Other</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-o" placeholder="0" oninput="doCalc()"></div></div>
+    <div class="fr fr4">
+      <div><label>Cargo Fee (%)</label><input type="number" id="c-cargo" value="${settings.cargoFeeRate}" step="0.5" oninput="qCalc()"></div>
+      <div><label>Freight (USD/KG)</label><input type="number" id="c-frkg" value="${settings.freightPerKg}" step="0.01" oninput="qCalc()"></div>
+      <div><label>Item Weight (KG)</label><input type="number" id="c-wt" placeholder="0.5" step="0.1" oninput="qCalc()"></div>
+      <div><label>Customs Duty (%)</label><input type="number" id="c-cust" value="${settings.customsDutyRate}" step="0.5" oninput="qCalc()"></div>
     </div>
-    <div class="form-row cols-2">
-      <div><label>Staff Handling</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-s" placeholder="0" oninput="doCalc()"></div></div>
-      <div><label>Delivery</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="cc-d" placeholder="0" oninput="doCalc()"></div></div>
+    <div class="fr fr3">
+      <div><label>GST Rate (%)</label><input type="number" id="c-gst" value="${settings.gstRate}" step="0.5" oninput="qCalc()"></div>
+      <div><label>Profit Margin (%)</label><input type="number" id="c-margin" value="${settings.profitMargin}" step="1" oninput="qCalc()"></div>
+      <div><label>Short Freight (USD)</label><input type="number" id="c-shortfr" value="0" step="0.01" oninput="qCalc()"></div>
     </div>
   </div>
-  <div class="card" id="cc-result">
-    <div class="card-title">📊 Cost Breakdown</div>
-    <div style="text-align:center;padding:30px;color:var(--t3)">Enter quantity and unit price above</div>
+  <div class="card" id="qcalc-result">
+    <div style="text-align:center;padding:24px;color:var(--t3)">Fill in price and quantity to calculate</div>
   </div>
   </div>`;
 }
 
-function doCalc(){
-  const qty=+document.getElementById('cc-qty')?.value||0;
-  const unit=+document.getElementById('cc-unit')?.value||0;
-  const gst=+document.getElementById('cc-gst')?.value||0;
-  const extras=[
-    +document.getElementById('cc-t')?.value||0,
-    +document.getElementById('cc-l')?.value||0,
-    +document.getElementById('cc-p')?.value||0,
-    +document.getElementById('cc-o')?.value||0,
-    +document.getElementById('cc-s')?.value||0,
-    +document.getElementById('cc-d')?.value||0,
-  ].reduce((a,b)=>a+b,0);
+function qCalc() {
+  const price  = +document.getElementById('c-price')?.value||0;
+  const qty    = +document.getElementById('c-qty')?.value||1;
+  const xr     = +document.getElementById('c-xr')?.value||15.42;
+  const cargoR = +document.getElementById('c-cargo')?.value||0;
+  const frKg   = +document.getElementById('c-frkg')?.value||0;
+  const wt     = +document.getElementById('c-wt')?.value||0;
+  const custR  = +document.getElementById('c-cust')?.value||0;
+  const gst    = +document.getElementById('c-gst')?.value||0;
+  const margin = +document.getElementById('c-margin')?.value||0;
+  const shortFr= +document.getElementById('c-shortfr')?.value||0;
+  const res = document.getElementById('qcalc-result');
+  if (!res||!price||!qty) return;
 
-  const res=document.getElementById('cc-result');
-  if(!res||!qty||!unit) return;
+  const invoiceTotal = price * qty;
+  const cargoFee = invoiceTotal * cargoR/100;
+  const freight = frKg * wt;
+  const cif = invoiceTotal + cargoFee + freight + shortFr;
+  const customs = cif * custR/100;
+  const totalUSD = cif + customs;
+  const totalMVR = totalUSD * xr;
+  const costPerUnit = totalMVR / qty;
+  const sellPrice = costPerUnit * (1+margin/100) * (1+gst/100);
+  const profitPerUnit = sellPrice - costPerUnit*(1+gst/100);
 
-  const wholesale=qty*unit;
-  const totalCost=wholesale+extras;
-  const costPerItem=totalCost/qty;
-  const gstAmt=costPerItem*gst/100;
-  const costWithGst=costPerItem+gstAmt;
-
-  res.innerHTML=`
-    <div class="card-title">📊 Cost Breakdown</div>
-    <div class="grid-2">
-      <div>
-        <div class="calc-box">
-          <div class="calc-row"><span class="calc-lbl">Wholesale (${qty} × ${fmt(unit)})</span><span class="calc-val">${fmt(wholesale)}</span></div>
-          <div class="calc-row"><span class="calc-lbl">Total Extra Costs</span><span class="calc-val" style="color:var(--gold)">${fmt(extras)}</span></div>
-          <div class="calc-row total"><span class="calc-lbl">Total Cost</span><span class="calc-val">${fmt(totalCost)}</span></div>
-        </div>
-        <div class="calc-box">
-          <div class="calc-row"><span class="calc-lbl">Base cost / item</span><span class="calc-val">${fmt(costPerItem)}</span></div>
-          <div class="calc-row"><span class="calc-lbl">GST amount / item (${gst}%)</span><span class="calc-val">+${fmt(gstAmt)}</span></div>
-          <div class="calc-row total"><span class="calc-lbl">Cost Price / item (with GST)</span><span class="calc-val">${fmt(costWithGst)}</span></div>
-        </div>
+  res.innerHTML = `
+    <div class="ct">💡 Results</div>
+    <div class="g2">
+      <div class="cbox">
+        <div class="crow"><span class="cl">Invoice (${qty} × $${price})</span><span class="cv">${fusd(invoiceTotal)}</span></div>
+        <div class="crow"><span class="cl">Cargo Fee (${cargoR}%)</span><span class="cv">${fusd(cargoFee)}</span></div>
+        <div class="crow"><span class="cl">Freight (${wt}kg × $${frKg})</span><span class="cv">${fusd(freight)}</span></div>
+        <div class="crow"><span class="cl">Short Freight</span><span class="cv">${fusd(shortFr)}</span></div>
+        <div class="crow"><span class="cl">Customs (${custR}%)</span><span class="cv" style="color:var(--gold)">${fusd(customs)}</span></div>
+        <div class="crow tot"><span>Total Cost USD</span><span class="cv">${fusd(totalUSD)}</span></div>
+        <div class="crow tot"><span>Total Cost MVR</span><span class="cv">${fmv(totalMVR)}</span></div>
       </div>
       <div>
-        <div class="highlight-box" style="margin-bottom:10px">
-          <div class="highlight-val">${fmt(costPerItem)}</div>
-          <div class="highlight-lbl">Cost price per item (before GST)</div>
+        <div class="hbox" style="margin-bottom:8px">
+          <div class="hval">${fmv(costPerUnit)}</div>
+          <div class="hlbl">Cost per unit (MVR)</div>
         </div>
-        <div class="highlight-box">
-          <div class="highlight-val">${fmt(costWithGst)}</div>
-          <div class="highlight-lbl">Cost price per item (with GST)</div>
+        <div class="hbox" style="background:linear-gradient(135deg,rgba(22,163,74,.08),rgba(13,148,136,.04));border-color:rgba(22,163,74,.2)">
+          <div class="hval" style="color:var(--green)">${fmv(sellPrice)}</div>
+          <div class="hlbl">Selling price per unit (with ${margin}% margin + ${gst}% GST)</div>
         </div>
-        <div style="margin-top:12px;background:var(--s2);border-radius:10px;padding:12px;font-size:12px">
-          <div style="margin-bottom:6px;font-weight:600;color:var(--t)">Breakdown by size/weight:</div>
-          ${[0.5,1,2,5].map(x=>`<div class="calc-row" style="font-size:11px"><span class="calc-lbl">${x} unit${x!==1?'s':''}</span><span class="calc-val">${fmt(costWithGst*x)}</span></div>`).join('')}
+        <div style="margin-top:8px;padding:10px;background:var(--s2);border-radius:8px;font-size:12px">
+          <div class="crow"><span class="cl">GST on selling price</span><span class="cv" style="color:var(--gold)">${fmv(sellPrice/(1+gst/100)*gst/100)}</span></div>
+          <div class="crow"><span class="cl">Profit per unit</span><span class="cv" style="color:var(--green)">${fmv(profitPerUnit)}</span></div>
+          <div class="crow"><span class="cl">Total profit (×${qty})</span><span class="cv" style="color:var(--green)">${fmv(profitPerUnit*qty)}</span></div>
         </div>
       </div>
     </div>`;
 }
 
-// ===== PRICE CALCULATOR =====
-function renderPriceCalc(){
-  return `
-  <div style="max-width:780px;margin:0 auto">
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">💲 Selling Price Calculator</div>
-    <div class="form-row cols-3">
-      <div><label>Cost Price per Item</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="pc-cost" placeholder="0.00" step="0.01" oninput="doPrice()"></div></div>
-      <div><label>GST Rate (%)</label><input type="number" id="pc-gst" value="${settings.gstRate}" step="0.1" oninput="doPrice()"></div>
-      <div><label>Profit Margin (%)</label><input type="number" id="pc-margin" value="${settings.profitMargin}" step="0.5" oninput="doPrice()"></div>
-    </div>
-    <div class="form-row cols-3">
-      <div><label>Fixed Profit Amount</label><div class="input-prefix"><span>${cur()}</span><input type="number" id="pc-fixed" placeholder="or enter fixed profit" step="0.01" oninput="doPrice()"></div></div>
-      <div><label>Discount (%)</label><input type="number" id="pc-disc" placeholder="0" step="0.5" max="100" oninput="doPrice()"></div>
-      <div><label>Quantity</label><input type="number" id="pc-qty" value="1" min="1" oninput="doPrice()"></div>
-    </div>
-  </div>
-  <div id="pc-result" class="card">
-    <div style="text-align:center;padding:30px;color:var(--t3)">Enter cost price to calculate selling prices</div>
-  </div>
-  </div>`;
-}
-
-function doPrice(){
-  const cost=+document.getElementById('pc-cost')?.value||0;
-  const gst=+document.getElementById('pc-gst')?.value||0;
-  const margin=+document.getElementById('pc-margin')?.value||0;
-  const fixed=+document.getElementById('pc-fixed')?.value||0;
-  const disc=+document.getElementById('pc-disc')?.value||0;
-  const qty=+document.getElementById('pc-qty')?.value||1;
-  const res=document.getElementById('pc-result');
-  if(!res||!cost) return;
-
-  const gstAmt=cost*gst/100;
-  const costWithGst=cost+gstAmt;
-  const sellByMargin=costWithGst*(1+margin/100);
-  const sellByFixed=fixed?costWithGst+fixed:null;
-  const suggested=sellByFixed||sellByMargin;
-  const minSell=costWithGst*(1+(settings.minMargin||10)/100);
-  const wholesaleP=costWithGst*(1+(margin/2)/100);
-  const retailP=costWithGst*(1+(margin*1.5)/100);
-  const discountP=suggested*(1-disc/100);
-  const profitItem=suggested-costWithGst;
-  const totalProfit=profitItem*qty;
-
-  const rows=[
-    {label:'Cost Price (before GST)',val:cost,color:'var(--t2)'},
-    {label:`GST Amount (${gst}%)`,val:gstAmt,color:'var(--gold)'},
-    {label:'Cost Price (after GST)',val:costWithGst,color:'var(--t)'},
-    null,
-    {label:`Suggested Sell Price (${margin}% margin)`,val:sellByMargin,color:'var(--accent)',big:true},
-    {label:'Minimum Sell Price',val:minSell,color:'var(--danger)'},
-    {label:'Wholesale Price',val:wholesaleP,color:'var(--accent2)'},
-    {label:'Retail Price',val:retailP,color:'var(--purple)'},
-    disc?{label:`Discount Price (${disc}% off)`,val:discountP,color:'var(--gold)'}:null,
-    null,
-    {label:'Profit per Item',val:profitItem,color:'var(--accent)'},
-    {label:`Total Profit (×${qty})`,val:totalProfit,color:'var(--accent)',big:true},
-  ].filter(Boolean);
-
-  res.innerHTML=`
-    <div class="card-title">💹 Price Breakdown</div>
-    <div class="grid-2">
-      <div class="calc-box">
-        ${rows.map(r=>{
-          if(r===null) return '<div style="height:8px"></div>';
-          return `<div class="calc-row ${r.big?'total':''}">
-            <span class="calc-lbl">${r.label}</span>
-            <span class="calc-val" style="color:${r.color};${r.big?'font-size:15px':''}">${fmt(r.val)}</span>
-          </div>`;
-        }).join('')}
-      </div>
-      <div>
-        <div class="highlight-box" style="margin-bottom:10px">
-          <div class="highlight-val">${fmt(suggested)}</div>
-          <div class="highlight-lbl">Suggested Selling Price</div>
-        </div>
-        <div class="highlight-box" style="background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(239,68,68,.05));border-color:rgba(245,158,11,.2);margin-bottom:10px">
-          <div class="highlight-val" style="color:var(--gold)">${fmt(totalProfit)}</div>
-          <div class="highlight-lbl">Total Expected Profit (qty ${qty})</div>
-        </div>
-        <div style="background:var(--s2);border-radius:10px;padding:12px">
-          <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:8px">MARGIN HEALTH</div>
-          <div style="font-size:12px;display:flex;justify-content:space-between;margin-bottom:6px">
-            <span class="calc-lbl">Margin %</span>
-            <span style="color:${profitItem/suggested*100>=settings.minMargin?'var(--accent)':'var(--danger)';};font-weight:700">${(profitItem/suggested*100).toFixed(1)}%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((profitItem/suggested*100)*3,100)}%;${profitItem/suggested*100<settings.minMargin?'background:var(--danger)':''}"></div></div>
-          <div style="font-size:10px;color:var(--t3);margin-top:4px">Min required: ${settings.minMargin}%</div>
-        </div>
-      </div>
-    </div>`;
-}
-
-// ===== REPORTS =====
-function renderReports(){
-  const totalCost=products.reduce((s,p)=>s+calcProduct(p).totalCost,0);
-  const totalRevenue=products.reduce((s,p)=>s+calcProduct(p).sellPrice*(+p.qty||1),0);
-  const totalProfit=totalRevenue-totalCost;
-  const totalGst=products.reduce((s,p)=>s+calcProduct(p).gstAmt*(+p.qty||1),0);
-  const bestProfit=[...products].sort((a,b)=>calcProduct(b).totalProfit-calcProduct(a).totalProfit).slice(0,5);
+// =================== REPORTS ===================
+function renderReports() {
+  const totalCostMVR = orders.reduce((s,o)=>s+calcOrder(o).grandTotalMVR,0);
+  const allItems = orders.flatMap(o=>calcOrder(o).calcItems.map(i=>({...i,orderSupplier:o.supplier,orderDate:o.date})));
+  const totalRevMVR = allItems.reduce((s,i)=>s+i.sellPrice*(+i.qty||0),0);
+  const totalProfit = allItems.reduce((s,i)=>s+i.profitPerUnit*(+i.qty||0),0);
+  const totalGST = allItems.reduce((s,i)=>s+(i.sellPrice/(1+(orders.find(o=>o.items?.some(oi=>oi.id===i.id))?.gstRate||6)/100))*(orders.find(o=>o.items?.some(oi=>oi.id===i.id))?.gstRate||6)/100*(+i.qty||0),0);
 
   return `
-  <div class="grid-3" style="margin-bottom:20px">
-    <div class="stat-card" style="border-color:rgba(59,130,246,.2)">
-      <div class="stat-val" style="color:var(--accent2)">${fmt(totalCost)}</div>
-      <div class="stat-lbl">Total Purchase Cost</div>
-    </div>
-    <div class="stat-card" style="border-color:rgba(16,185,129,.2)">
-      <div class="stat-val" style="color:var(--accent)">${fmt(totalRevenue)}</div>
-      <div class="stat-lbl">Total Revenue (if all sold)</div>
-    </div>
-    <div class="stat-card" style="border-color:rgba(245,158,11,.2)">
-      <div class="stat-val" style="color:var(--gold)">${fmt(totalGst)}</div>
-      <div class="stat-lbl">Total GST Amount</div>
-    </div>
+  <div class="g3" style="margin-bottom:14px">
+    <div class="sc"><div class="sl">Total Import Cost (MVR)</div><div class="sv" style="font-size:15px;color:var(--accent)">${fmv(totalCostMVR)}</div></div>
+    <div class="sc"><div class="sl">Total Revenue (MVR)</div><div class="sv" style="font-size:15px;color:var(--green)">${fmv(totalRevMVR)}</div></div>
+    <div class="sc"><div class="sl">Expected Profit (MVR)</div><div class="sv" style="font-size:15px;color:var(--green)">${fmv(totalProfit)}</div></div>
   </div>
-
-  <div class="card" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="card-title" style="margin-bottom:0">📋 Full Product Report</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="ct" style="margin-bottom:0">📋 Full Item Report</div>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-sm btn-secondary" onclick="exportPDF()">📄 PDF</button>
-        <button class="btn btn-sm btn-secondary" onclick="exportExcel()">📊 Excel</button>
+        <button class="btn btn-s btn-sm" onclick="exportAllPDF()">📄 PDF</button>
+        <button class="btn btn-s btn-sm" onclick="exportAllExcel()">📊 Excel</button>
       </div>
     </div>
-    <div class="tbl-wrap">
+    <div class="tw">
       <table>
-        <thead><tr><th>Product</th><th>Supplier</th><th>Category</th><th>Qty</th><th>Purchase Cost</th><th>Extra Costs</th><th>Total Cost</th><th>Cost/Item</th><th>GST</th><th>Sell Price</th><th>Margin%</th><th>Total Profit</th></tr></thead>
+        <thead><tr><th>Supplier</th><th>Product</th><th>Size</th><th>Qty</th><th>Unit (USD)</th><th>Cost/Unit (MVR)</th><th>Sell Price</th><th>Profit/Unit</th><th>Total Profit</th></tr></thead>
         <tbody>
-          ${products.length?products.map(p=>{
-            const c=calcProduct(p);
-            const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-            return `<tr>
-              <td style="font-weight:600">${p.name||'—'}</td>
-              <td style="color:var(--t3)">${p.supplier||'—'}</td>
-              <td><span class="badge badge-blue">${p.category||'—'}</span></td>
-              <td>${p.qty||0}</td>
-              <td>${fmt(c.wholesale)}</td>
-              <td style="color:var(--gold)">${fmt(c.extras)}</td>
-              <td>${fmt(c.totalCost)}</td>
-              <td>${fmt(c.costPerItem)}</td>
-              <td>${p.gstRate||0}%</td>
-              <td style="color:var(--accent);font-weight:700">${fmt(c.sellPrice)}</td>
-              <td><span class="badge ${+m>=settings.minMargin?'badge-green':'badge-red'}">${m}%</span></td>
-              <td style="color:var(--gold);font-weight:600">${fmt(c.totalProfit)}</td>
-            </tr>`;
-          }).join(''):`<tr><td colspan="12"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No data</div></div></td></tr>`}
+          ${allItems.length ? allItems.map(i=>`<tr>
+            <td style="color:var(--t3)">${i.orderSupplier||'—'}</td>
+            <td style="font-weight:600">${i.name||'—'}</td>
+            <td>${i.size||'—'}</td>
+            <td>${i.qty}</td>
+            <td>${fusd(i.unitPriceUSD)}</td>
+            <td style="color:var(--accent)">${fmv(i.costPerUnitMVR)}</td>
+            <td style="color:var(--green);font-weight:700">${fmv(i.sellPrice)}</td>
+            <td style="color:var(--green)">${fmv(i.profitPerUnit)}</td>
+            <td style="color:var(--green);font-weight:600">${fmv(i.profitPerUnit*(+i.qty||0))}</td>
+          </tr>`).join('') : `<tr><td colspan="9"><div class="empty"><div class="empty-icon">📊</div><div>No data</div></div></td></tr>`}
         </tbody>
-        ${products.length?`<tfoot>
-          <tr style="background:var(--s2)">
-            <td colspan="4" style="font-weight:700;color:var(--t)">TOTAL</td>
-            <td style="font-weight:700">${fmt(products.reduce((s,p)=>s+calcProduct(p).wholesale,0))}</td>
-            <td style="font-weight:700;color:var(--gold)">${fmt(products.reduce((s,p)=>s+calcProduct(p).extras,0))}</td>
-            <td style="font-weight:700">${fmt(totalCost)}</td>
-            <td colspan="2"></td>
-            <td style="font-weight:700;color:var(--accent)">${fmt(totalRevenue)}</td>
-            <td></td>
-            <td style="font-weight:700;color:var(--gold)">${fmt(totalProfit)}</td>
-          </tr>
-        </tfoot>`:''}
       </table>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🏆 Top 5 Products by Profit</div>
-    ${bestProfit.length?bestProfit.map((p,i)=>{
-      const c=calcProduct(p);
-      const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-        <div style="width:24px;height:24px;border-radius:50%;background:rgba(16,185,129,.15);color:var(--accent);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${i+1}</div>
-        <div style="flex:1">
-          <div style="font-weight:600;font-size:13px">${p.name}</div>
-          <div style="font-size:11px;color:var(--t3)">${p.supplier||'—'} · ${m}% margin</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-weight:700;color:var(--gold)">${fmt(c.totalProfit)}</div>
-          <div style="font-size:10px;color:var(--t3)">${fmt(c.profitPerItem)}/item</div>
-        </div>
-      </div>`;
-    }).join(''):`<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Add products to see top performers</div></div>`}
   </div>`;
 }
 
-// ===== SUPPLIERS =====
-function renderSuppliers(){
+// =================== SETTINGS ===================
+function renderSettings() {
   return `
-  <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
-    <button class="btn btn-primary" onclick="openAddSupplier()">+ Add Supplier</button>
-  </div>
-  <div class="tbl-wrap">
-    <table>
-      <thead><tr><th>#</th><th>Supplier Name</th><th>Products</th><th>Total Purchased</th><th>Added</th><th>Actions</th></tr></thead>
-      <tbody>
-        ${suppliers.length?suppliers.map((s,i)=>{
-          const prods=products.filter(p=>p.supplier===s.name);
-          const total=prods.reduce((sum,p)=>sum+calcProduct(p).totalCost,0);
-          return `<tr>
-            <td style="color:var(--t3)">${i+1}</td>
-            <td style="font-weight:600;color:var(--t)">${s.name}</td>
-            <td><span class="badge badge-blue">${prods.length}</span></td>
-            <td style="color:var(--accent)">${fmt(total)}</td>
-            <td style="color:var(--t3)">${s.added||'—'}</td>
-            <td>
-              <button class="btn btn-sm btn-danger" onclick="deleteSupplier('${s.id}')">Delete</button>
-            </td>
-          </tr>`;
-        }).join(''):`<tr><td colspan="6"><div class="empty"><div class="empty-icon">🏪</div><div class="empty-text">No suppliers yet</div><div class="empty-sub">They are added automatically when you save a product</div></div></td></tr>`}
-      </tbody>
-    </table>
-  </div>`;
-}
-
-function openAddSupplier(){
-  document.getElementById('mc').innerHTML=`
-  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div class="modal-header"><div class="modal-title">Add Supplier</div><button class="close-btn" onclick="closeModal()">×</button></div>
-      <div class="modal-body">
-        <div class="form-group"><label>Supplier Name *</label><input id="ms-name" placeholder="Supplier / Wholesaler name"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="addSupplier()">Add Supplier</button>
-      </div>
+  <div style="max-width:580px;margin:0 auto">
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">⚙️ Default Values</div>
+    <div class="fr fr2">
+      <div><label>Currency</label><select id="st-cur" onchange="settings.currency=this.value;save();toast('Saved')">
+        ${['MVR','USD','EUR','GBP','SGD','AED','INR'].map(c=>`<option value="${c}" ${settings.currency===c?'selected':''}>${c}</option>`).join('')}
+      </select></div>
+      <div><label>USD → MVR Exchange Rate</label><input type="number" id="st-xr" value="${settings.exchangeRate}" step="0.01" onchange="settings.exchangeRate=+this.value;save();toast('Saved')"></div>
     </div>
-  </div>`;
-}
-
-function addSupplier(){
-  const name=document.getElementById('ms-name')?.value?.trim();
-  if(!name){toast('Enter supplier name','error');return;}
-  if(suppliers.find(s=>s.name===name)){toast('Supplier already exists','error');return;}
-  suppliers.unshift({id:uid(),name,added:new Date().toISOString().split('T')[0]});
-  saveData();
-  closeModal();
-  toast('Supplier added!','success');
-  navigate('suppliers');
-}
-
-function deleteSupplier(id){
-  if(!confirm('Delete this supplier?')) return;
-  suppliers=suppliers.filter(s=>s.id!==id);
-  saveData();
-  navigate('suppliers');
-}
-
-// ===== SETTINGS =====
-function renderSettings(){
-  return `
-  <div style="max-width:600px;margin:0 auto">
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">⚙️ General Settings</div>
-    <div class="form-row cols-2">
-      <div><label>Currency</label>
-        <select id="st-cur" onchange="settings.currency=this.value;saveData();toast('Saved')">
-          ${['MVR','USD','EUR','GBP','SGD','AED','INR','LKR'].map(c=>`<option value="${c}" ${settings.currency===c?'selected':''}>${c}</option>`).join('')}
-        </select>
-      </div>
-      <div><label>Default GST Rate (%)</label>
-        <input type="number" id="st-gst" value="${settings.gstRate}" step="0.1" min="0" max="100" onchange="settings.gstRate=+this.value;saveData();toast('Saved')">
-      </div>
+    <div class="fr fr2">
+      <div><label>Default GST Rate (%)</label><input type="number" id="st-gst" value="${settings.gstRate}" step="0.5" onchange="settings.gstRate=+this.value;save();toast('Saved')"></div>
+      <div><label>Default Profit Margin (%)</label><input type="number" id="st-margin" value="${settings.profitMargin}" step="1" onchange="settings.profitMargin=+this.value;save();toast('Saved')"></div>
     </div>
-    <div class="form-row cols-2">
-      <div><label>Default Profit Margin (%)</label>
-        <input type="number" id="st-margin" value="${settings.profitMargin}" step="0.5" min="0" onchange="settings.profitMargin=+this.value;saveData();toast('Saved')">
-      </div>
-      <div><label>Minimum Margin Alert (%)</label>
-        <input type="number" id="st-min" value="${settings.minMargin}" step="0.5" min="0" onchange="settings.minMargin=+this.value;saveData();toast('Saved')">
-      </div>
+    <div class="fr fr2">
+      <div><label>Default Cargo Fee (%)</label><input type="number" id="st-cargo" value="${settings.cargoFeeRate}" step="0.5" onchange="settings.cargoFeeRate=+this.value;save();toast('Saved')"></div>
+      <div><label>Default Freight (USD/KG)</label><input type="number" id="st-frkg" value="${settings.freightPerKg}" step="0.01" onchange="settings.freightPerKg=+this.value;save();toast('Saved')"></div>
+    </div>
+    <div class="fr fr2">
+      <div><label>Default Customs Duty (%)</label><input type="number" id="st-cust" value="${settings.customsDutyRate}" step="0.5" onchange="settings.customsDutyRate=+this.value;save();toast('Saved')"></div>
+      <div><label>Min Margin Alert (%)</label><input type="number" id="st-min" value="${settings.minMargin}" step="1" onchange="settings.minMargin=+this.value;save();toast('Saved')"></div>
     </div>
   </div>
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">🗃️ Data Management</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-secondary" onclick="exportData()">📤 Export Data (JSON)</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📥 Import Data</button>
-      <button class="btn btn-danger" onclick="clearAllData()">🗑 Clear All Data</button>
+  <div class="card" style="margin-bottom:14px">
+    <div class="ct">🗃️ Data</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-s btn-sm" onclick="exportData()">📤 Export Backup</button>
+      <button class="btn btn-s btn-sm" onclick="document.getElementById('imp-file').click()">📥 Import</button>
+      <button class="btn btn-d btn-sm" onclick="clearAll()">🗑 Clear All</button>
     </div>
-    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+    <input type="file" id="imp-file" accept=".json" style="display:none" onchange="importData(this)">
   </div>
   <div class="card">
-    <div class="card-title">ℹ️ About</div>
-    <div style="font-size:13px;color:var(--t2);line-height:1.7">
-      <strong>PriceMate v1.0</strong><br>
-      A cost & price calculator for shops and small businesses.<br>
-      All data is stored locally in your browser.<br><br>
-      <span style="color:var(--t3)">Products: ${products.length} · Suppliers: ${suppliers.length}</span>
+    <div class="ct">ℹ️ About</div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.7">
+      <strong>PriceMate v2.0</strong> — Import Cost Calculator<br>
+      Built for shops importing from China. Calculates real cost price including freight, cargo fees, and customs duty, then gives the correct selling price per size.<br><br>
+      <span style="color:var(--t3)">Orders: ${orders.length} · All data stored locally in your browser.</span>
     </div>
   </div>
   </div>`;
 }
 
-// ===== EXPORT =====
-function exportPDF(){
-  if(!window.jspdf){toast('PDF library loading...','info');return;}
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'landscape'});
-  doc.setFontSize(16);
-  doc.text('PriceMate — Product Cost Report',14,18);
-  doc.setFontSize(10);
-  doc.text(`Generated: ${new Date().toLocaleDateString()}`,14,26);
-  const rows=products.map(p=>{
-    const c=calcProduct(p);
-    const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-    return [p.name||'',p.supplier||'',p.category||'',p.qty,fmt(c.totalCost),fmt(c.costPerItem),`${p.gstRate||0}%`,fmt(c.sellPrice),`${m}%`,fmt(c.totalProfit)];
-  });
-  doc.autoTable({startY:32,head:[['Product','Supplier','Category','Qty','Total Cost','Cost/Item','GST','Sell Price','Margin','Profit']],body:rows,styles:{fontSize:8,cellPadding:3},headStyles:{fillColor:[16,185,129]}});
+// =================== EXPORT ===================
+function exportAllPDF() {
+  if (!window.jspdf) { toast('PDF loading...','i'); return; }
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'landscape'});
+  doc.setFontSize(14); doc.text('PriceMate — Import Cost Report',14,16);
+  doc.setFontSize(9); doc.text('Generated: '+new Date().toLocaleDateString(),14,22);
+  const allItems = orders.flatMap(o=>calcOrder(o).calcItems.map(i=>({...i,orderSupplier:o.supplier})));
+  doc.autoTable({startY:26,head:[['Supplier','Product','Size','Qty','Unit(USD)','Cost/Unit(MVR)','Sell Price','Profit/Unit']],body:allItems.map(i=>[i.orderSupplier||'',i.name||'',i.size||'',i.qty,fusd(i.unitPriceUSD),fmv(i.costPerUnitMVR),fmv(i.sellPrice),fmv(i.profitPerUnit)]),styles:{fontSize:8},headStyles:{fillColor:[13,148,136]}});
   doc.save('pricemate-report.pdf');
-  toast('PDF exported!','success');
+  toast('PDF exported!','s');
 }
 
-function exportExcel(){
-  if(!window.XLSX){toast('Excel library loading...','info');return;}
-  const rows=products.map(p=>{
-    const c=calcProduct(p);
-    const m=c.sellPrice?((c.profitPerItem/c.sellPrice)*100).toFixed(1):0;
-    return {Product:p.name,Supplier:p.supplier,Category:p.category,Quantity:p.qty,'Unit Price':p.unitPrice,'Wholesale Cost':c.wholesale,'Extra Costs':c.extras,'Total Cost':c.totalCost,'Cost/Item':+c.costPerItem.toFixed(2),'GST%':p.gstRate,'Sell Price':+c.sellPrice.toFixed(2),'Margin%':+m,'Profit/Item':+c.profitPerItem.toFixed(2),'Total Profit':+c.totalProfit.toFixed(2)};
-  });
-  const ws=XLSX.utils.json_to_sheet(rows);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Products');
+function exportAllExcel() {
+  if (!window.XLSX) { toast('Excel loading...','i'); return; }
+  const allItems = orders.flatMap(o=>calcOrder(o).calcItems.map(i=>({Supplier:o.supplier,Product:i.name,Size:i.size,Qty:i.qty,'Unit Price (USD)':+i.unitPriceUSD,'Cost/Unit (MVR)':n2(i.costPerUnitMVR),'Sell Price (MVR)':n2(i.sellPrice),'Profit/Unit':n2(i.profitPerUnit)})));
+  const ws = XLSX.utils.json_to_sheet(allItems);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Items');
   XLSX.writeFile(wb,'pricemate-report.xlsx');
-  toast('Excel exported!','success');
+  toast('Excel exported!','s');
 }
 
-function exportData(){
-  const data=JSON.stringify({products,suppliers,settings},null,2);
+function exportOrderPDF(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o||!window.jspdf) { toast('PDF loading...','i'); return; }
+  const {jsPDF} = window.jspdf;
+  const c = calcOrder(o);
+  const doc = new jsPDF();
+  doc.setFontSize(16); doc.text('PriceMate — Order: '+o.supplier,14,16);
+  doc.setFontSize(9); doc.text(`Invoice: ${o.invoiceNo||'—'} | Date: ${o.date||'—'} | Rate: ${o.exchangeRate} MVR/USD`,14,23);
+  doc.text(`Total Cost: ${fmv(c.grandTotalMVR)} | Margin: ${o.profitMargin}% | GST: ${o.gstRate}%`,14,29);
+  doc.autoTable({startY:33,head:[['Product','Size','Qty','Unit(USD)','Cost/Unit(MVR)','Sell Price(MVR)','Profit/Unit']],body:c.calcItems.map(i=>[i.name||'',i.size||'',i.qty,fusd(i.unitPriceUSD),fmv(i.costPerUnitMVR),fmv(i.sellPrice),fmv(i.profitPerUnit)]),styles:{fontSize:8},headStyles:{fillColor:[13,148,136]}});
+  doc.save(`order-${o.supplier||'export'}.pdf`);
+  toast('PDF exported!','s');
+}
+
+function exportOrderExcel(id) {
+  const o = orders.find(x=>x.id===id);
+  if (!o||!window.XLSX) { toast('Excel loading...','i'); return; }
+  const c = calcOrder(o);
+  const ws = XLSX.utils.json_to_sheet(c.calcItems.map(i=>({Product:i.name,Size:i.size,Qty:i.qty,'Unit(USD)':+i.unitPriceUSD,'Cost/Unit(MVR)':n2(i.costPerUnitMVR),'Sell Price':n2(i.sellPrice),'Profit/Unit':n2(i.profitPerUnit)})));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Order');
+  XLSX.writeFile(wb,`order-${o.supplier||'export'}.xlsx`);
+  toast('Excel exported!','s');
+}
+
+function exportData() {
   const a=document.createElement('a');
-  a.href='data:text/json,'+encodeURIComponent(data);
-  a.download='pricemate-backup.json';
-  a.click();
-  toast('Data exported!','success');
+  a.href='data:text/json,'+encodeURIComponent(JSON.stringify({orders,settings},null,2));
+  a.download='pricemate-backup.json'; a.click();
+  toast('Data exported','s');
 }
 
-function importData(input){
-  const f=input.files[0];
-  if(!f) return;
+function importData(inp) {
+  const f=inp.files[0]; if(!f) return;
   const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const d=JSON.parse(e.target.result);
-      if(d.products) products=d.products;
-      if(d.suppliers) suppliers=d.suppliers;
-      if(d.settings) settings={...DEF_SETTINGS,...d.settings};
-      saveData();
-      toast('Data imported!','success');
-      navigate('dashboard');
-    }catch{toast('Invalid file','error');}
-  };
+  r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.orders)orders=d.orders;if(d.settings)settings={...DEF,...d.settings};save();toast('Imported!','s');routeFromHash();}catch{toast('Invalid file','e');}};
   r.readAsText(f);
 }
 
-function clearAllData(){
-  if(!confirm('Delete ALL products and data? This cannot be undone!')) return;
-  products=[];suppliers=[];
-  saveData();
-  toast('All data cleared','info');
-  navigate('dashboard');
+function clearAll() {
+  if(!confirm('Delete ALL orders and data?')) return;
+  orders=[]; save(); toast('Cleared','i'); routeFromHash();
 }
 
-// ===== MODAL =====
-function closeModal(){document.getElementById('mc').innerHTML='';}
-
-// ===== TOAST =====
-function toast(msg,type='success'){
-  const icons={success:'✓',error:'✕',info:'ℹ'};
+// =================== TOAST ===================
+function toast(msg, type='s') {
+  const ic={s:'✓',e:'✕',i:'ℹ'};
+  const colors={s:'var(--accent)',e:'var(--danger)',i:'var(--accent2)'};
   const el=document.createElement('div');
-  el.className=`toast-item ${type}`;
-  el.innerHTML=`<span style="color:${type==='success'?'var(--accent)':type==='error'?'var(--danger)':'var(--accent2)'}">${icons[type]||'•'}</span>${msg}`;
+  el.className=`ti ${type}`;
+  el.innerHTML=`<span style="color:${colors[type]}">${ic[type]}</span>${msg}`;
   document.getElementById('toast').appendChild(el);
   setTimeout(()=>el.remove(),3000);
 }
 
-// ===== HASH ROUTING =====
+// =================== INIT ===================
 function routeFromHash() {
-  var p = window.location.hash.replace('#','') || 'dashboard';
-  navigate(p);
+  const h = window.location.hash.replace('#','') || 'dashboard';
+  currentPage = h;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  const lnk = document.querySelector('a.nb[href="#'+h+'"]');
+  if (lnk) lnk.classList.add('active');
+  document.getElementById('topbar-title').textContent = TITLES[h] || h;
+  const renders = {
+    'dashboard':renderDashboard,'new-order':()=>renderOrderForm(editingOrderId),
+    'orders':renderOrders,'order-detail':renderOrderDetail,
+    'calculator':renderCalculator,'reports':renderReports,'settings':renderSettings
+  };
+  const fn = renders[h];
+  document.getElementById('pg').innerHTML = fn ? fn() : '';
+  if (h==='dashboard') setTimeout(initCharts,80);
+  if (h==='new-order') { renderItemsBody(); setTimeout(liveCalcForm,50); }
+  document.getElementById('ov').classList.remove('show');
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0,0);
 }
+
 window.addEventListener('hashchange', routeFromHash);
-document.getElementById('menu-btn').addEventListener('click', toggleSidebar);
-document.getElementById('sb-overlay').addEventListener('click', closeSidebar);
+document.getElementById('mbtn').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('show');
+});
+document.getElementById('ov').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ov').classList.remove('show');
+});
 routeFromHash();
 </script>
 </body>
