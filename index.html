@@ -203,6 +203,10 @@ tfoot td{background:var(--s2)!important;font-weight:700;color:var(--t)}
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
       Quick Calculator
     </a>
+    <a class="nb" href="#batch">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      Price Table
+    </a>
     <a class="nb" href="#reports">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Reports
@@ -241,11 +245,13 @@ const DEF = {currency:'MVR',exchangeRate:15.42,gstRate:6,profitMargin:30,customs
 
 let orders   = JSON.parse(localStorage.getItem('pm_orders')  || '[]');
 let settings = JSON.parse(localStorage.getItem('pm_settings')|| JSON.stringify(DEF));
+let batchRows = JSON.parse(localStorage.getItem('pm_batch')  || '[]');
 let editingOrderId = null;
 
 function save() {
   localStorage.setItem('pm_orders', JSON.stringify(orders));
   localStorage.setItem('pm_settings', JSON.stringify(settings));
+  localStorage.setItem('pm_batch', JSON.stringify(batchRows));
 }
 
 const cur = () => settings.currency || 'MVR';
@@ -291,8 +297,174 @@ function calcOrder(o) {
   return {invoiceSub, cargoFee, freight, shortFr, cifTotal, customs, other, grandTotalUSD, grandTotalMVR, calcItems};
 }
 
+// =================== BATCH PRICE TABLE ===================
+function newBatchRow(productName) {
+  return {id:UID(), product:productName||'', variant:'', qty:1, cost1:0, cost2:0, cost3:0, cost4:0, markup:settings.profitMargin||30, gst:settings.gstRate||6, shipping:0, xr:settings.exchangeRate||15.42};
+}
+
+function calcBatchRow(r) {
+  const totalCostUSD = (+r.cost1||0) + (+r.cost2||0) + (+r.cost3||0) + (+r.cost4||0);
+  const totalCostMVR = totalCostUSD * (+r.xr||15.42);
+  const markupAmt    = totalCostMVR * (+r.markup||0)/100;
+  const subtotal     = totalCostMVR + markupAmt + (+r.shipping||0);
+  const gstAmt       = subtotal * (+r.gst||0)/100;
+  const totalPrice   = subtotal + gstAmt;
+  const profit       = totalPrice - totalCostMVR - (+r.shipping||0);
+  return {totalCostUSD, totalCostMVR, markupAmt, subtotal, gstAmt, totalPrice, profit};
+}
+
+function renderBatchCalc() {
+  if (!batchRows.length) {
+    batchRows = [
+      {id:UID(), product:'Product 1', variant:'', qty:'', cost1:'', cost2:'', cost3:'', cost4:'', markup:settings.profitMargin||30, gst:settings.gstRate||6, shipping:'', xr:settings.exchangeRate||15.42},
+      {id:UID(), product:'Product 1', variant:'', qty:'', cost1:'', cost2:'', cost3:'', cost4:'', markup:settings.profitMargin||30, gst:settings.gstRate||6, shipping:'', xr:settings.exchangeRate||15.42},
+    ];
+  }
+  return `
+<style>
+.bt{width:100%;border-collapse:collapse;font-size:11px;min-width:1100px}
+.bt thead tr:first-child th{background:#8B5E1A;color:#fff;padding:8px 6px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.05em;border:1px solid rgba(255,255,255,.15)}
+.bt thead tr:last-child th{background:#A67C2E;color:#fff;padding:7px 6px;text-align:center;font-size:9px;font-weight:700;letter-spacing:.04em;border:1px solid rgba(255,255,255,.15)}
+.bt td{padding:0;border:1px solid #D4B896;vertical-align:middle;background:#FFFCF8}
+.bt td input{width:100%;border:none;background:transparent;padding:7px 6px;font-size:11px;font-family:inherit;color:#3D2C0A;text-align:center;outline:none}
+.bt td input:focus{background:#FFF8E7;outline:2px solid #D97706;outline-offset:-2px}
+.bt td.lbl{background:#F5EDD8;font-weight:700;font-size:11px;color:#5C3D0A;padding:7px 8px;white-space:nowrap;max-width:120px}
+.bt td.auto{background:#FDF5E0;color:#8B5E1A;font-weight:700;padding:7px 6px;text-align:center;font-size:11px}
+.bt td.sell{background:#FFF3CD;color:#5C3D0A;font-weight:800;font-size:13px;padding:7px 8px;text-align:center}
+.bt td.profit{background:#E8F5E9;color:#1B5E20;font-weight:700;padding:7px 6px;text-align:center}
+.bt tr.product-header td{background:#F5EDD8;font-weight:800;font-size:12px;color:#5C3D0A;padding:8px;border-top:2px solid #D4B896}
+.bt-wrap{overflow-x:auto;border:2px solid #D4B896;border-radius:10px;box-shadow:0 4px 20px rgba(139,94,26,.12)}
+</style>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+  <div>
+    <div style="font-size:16px;font-weight:800;color:#5C3D0A">Price Calculator Table</div>
+    <div style="font-size:11px;color:var(--t3);margin-top:2px">Enter costs → auto-calculates selling price per product/variant</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-s btn-sm" id="bt-add-row">+ Add Row</button>
+    <button class="btn btn-s btn-sm" id="bt-add-product">+ New Product Group</button>
+    <button class="btn btn-s btn-sm" id="bt-export-xl">📊 Export Excel</button>
+    <button class="btn btn-p btn-sm" id="bt-save">💾 Save Table</button>
+  </div>
+</div>
+
+<div style="background:#FFF8EE;border:1px solid #D4B896;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#7C4E10">
+  <strong>Column Guide:</strong> Cost 1 = Unit Price (USD) &nbsp;·&nbsp; Cost 2 = Freight per unit (USD) &nbsp;·&nbsp; Cost 3 = Customs per unit (USD) &nbsp;·&nbsp; Cost 4 = Other costs (USD) &nbsp;·&nbsp; Markup % = Profit margin &nbsp;·&nbsp; All prices shown in MVR
+</div>
+
+<div class="bt-wrap">
+<table class="bt" id="batch-table">
+  <thead>
+    <tr>
+      <th rowspan="2" style="min-width:110px">Product Name</th>
+      <th rowspan="2" style="min-width:80px">Variant / Size</th>
+      <th rowspan="2" style="min-width:50px">Qty</th>
+      <th colspan="4">Cost per Unit (USD) — To figure out the real cost</th>
+      <th rowspan="2" style="min-width:80px">Exchange Rate</th>
+      <th rowspan="2" style="min-width:90px;background:#6B4510">Total Cost (MVR)</th>
+      <th colspan="2">Markup / Profit</th>
+      <th rowspan="2" style="min-width:60px">GST %</th>
+      <th rowspan="2" style="min-width:70px">GST Amt (MVR)</th>
+      <th rowspan="2" style="min-width:70px">Shipping (MVR)</th>
+      <th rowspan="2" style="min-width:100px;background:#4A7C1A">Selling Price (MVR)</th>
+      <th rowspan="2" style="min-width:80px;background:#1A5C2A">Profit / Unit</th>
+      <th rowspan="2" style="min-width:40px"></th>
+    </tr>
+    <tr>
+      <th>Cost 1<br><span style="font-weight:400;font-size:9px">Unit Price</span></th>
+      <th>Cost 2<br><span style="font-weight:400;font-size:9px">Freight</span></th>
+      <th>Cost 3<br><span style="font-weight:400;font-size:9px">Customs</span></th>
+      <th>Cost 4<br><span style="font-weight:400;font-size:9px">Other</span></th>
+      <th>Markup %</th>
+      <th>Markup Amt</th>
+    </tr>
+  </thead>
+  <tbody id="batch-tbody"></tbody>
+</table>
+</div>`;
+}
+
+function renderBatchRows() {
+  const tbody = document.getElementById('batch-tbody');
+  if (!tbody) return;
+  let html = '';
+  let lastProduct = null;
+  batchRows.forEach((r, i) => {
+    if (r.product !== lastProduct) {
+      lastProduct = r.product;
+    }
+    const c = calcBatchRow(r);
+    html += `<tr id="br-${r.id}">
+      <td class="lbl"><input value="${r.product||''}" placeholder="Product name" data-idx="${i}" data-field="product"></td>
+      <td class="lbl"><input value="${r.variant||''}" placeholder="45cm / Small" data-idx="${i}" data-field="variant"></td>
+      <td><input type="number" value="${r.qty||''}" placeholder="10" data-idx="${i}" data-field="qty" style="width:50px"></td>
+      <td><input type="number" value="${r.cost1||''}" placeholder="0.00" step="0.01" data-idx="${i}" data-field="cost1"></td>
+      <td><input type="number" value="${r.cost2||''}" placeholder="0.00" step="0.01" data-idx="${i}" data-field="cost2"></td>
+      <td><input type="number" value="${r.cost3||''}" placeholder="0.00" step="0.01" data-idx="${i}" data-field="cost3"></td>
+      <td><input type="number" value="${r.cost4||''}" placeholder="0.00" step="0.01" data-idx="${i}" data-field="cost4"></td>
+      <td><input type="number" value="${r.xr||settings.exchangeRate}" step="0.01" data-idx="${i}" data-field="xr" style="width:70px"></td>
+      <td class="auto">${c.totalCostMVR?fmv(c.totalCostMVR):'—'}</td>
+      <td><input type="number" value="${r.markup||''}" placeholder="${settings.profitMargin}" step="1" data-idx="${i}" data-field="markup" style="width:55px">%</td>
+      <td class="auto">${c.markupAmt?fmv(c.markupAmt):'—'}</td>
+      <td><input type="number" value="${r.gst||''}" placeholder="${settings.gstRate}" step="0.5" data-idx="${i}" data-field="gst" style="width:45px">%</td>
+      <td class="auto" style="color:var(--gold)">${c.gstAmt?fmv(c.gstAmt):'—'}</td>
+      <td><input type="number" value="${r.shipping||''}" placeholder="0" step="0.5" data-idx="${i}" data-field="shipping" style="width:60px"></td>
+      <td class="sell">${c.totalPrice?fmv(c.totalPrice):'—'}</td>
+      <td class="profit">${c.profit?fmv(c.profit):'—'}</td>
+      <td style="background:#FFF8EE;text-align:center"><button style="background:none;border:none;cursor:pointer;color:#DC2626;font-size:14px;padding:4px 8px" data-del="${r.id}">×</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+
+  // Attach input listeners
+  tbody.querySelectorAll('input[data-field]').forEach(inp => {
+    inp.addEventListener('input', function() {
+      const idx = +this.getAttribute('data-idx');
+      const field = this.getAttribute('data-field');
+      if (batchRows[idx]) {
+        batchRows[idx][field] = this.value;
+        // Re-render just the auto cells for this row
+        const c = calcBatchRow(batchRows[idx]);
+        const tr = document.getElementById('br-'+batchRows[idx].id);
+        if (tr) {
+          const autos = tr.querySelectorAll('.auto');
+          if (autos[0]) autos[0].textContent = c.totalCostMVR?fmv(c.totalCostMVR):'—';
+          if (autos[1]) autos[1].textContent = c.markupAmt?fmv(c.markupAmt):'—';
+          if (autos[2]) autos[2].textContent = c.gstAmt?fmv(c.gstAmt):'—';
+          const sell = tr.querySelector('.sell');
+          if (sell) sell.textContent = c.totalPrice?fmv(c.totalPrice):'—';
+          const prof = tr.querySelector('.profit');
+          if (prof) prof.textContent = c.profit?fmv(c.profit):'—';
+        }
+      }
+    });
+  });
+
+  // Delete buttons
+  tbody.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.getAttribute('data-del');
+      batchRows = batchRows.filter(r=>r.id!==id);
+      renderBatchRows();
+    });
+  });
+}
+
+function exportBatchExcel() {
+  if (!window.XLSX) { toast('Loading...','i'); return; }
+  const rows = batchRows.map(r => {
+    const c = calcBatchRow(r);
+    return {'Product':r.product,'Variant':r.variant,'Qty':r.qty,'Cost1(USD)':+r.cost1||0,'Cost2(USD)':+r.cost2||0,'Cost3(USD)':+r.cost3||0,'Cost4(USD)':+r.cost4||0,'Exchange Rate':+r.xr,'Total Cost(MVR)':n2(c.totalCostMVR),'Markup%':+r.markup,'Markup Amt(MVR)':n2(c.markupAmt),'GST%':+r.gst,'GST Amt(MVR)':n2(c.gstAmt),'Shipping(MVR)':+r.shipping||0,'Selling Price(MVR)':n2(c.totalPrice),'Profit/Unit(MVR)':n2(c.profit)};
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Price Table');
+  XLSX.writeFile(wb,'pricemate-price-table.xlsx');
+  toast('Exported to Excel!','s');
+}
+
 // =================== ROUTING ===================
-const TITLES = {'dashboard':'Dashboard','new-order':'New Import Order','orders':'All Orders','order-detail':'Order Detail','calculator':'Quick Calculator','reports':'Reports','settings':'Settings'};
+const TITLES = {'dashboard':'Dashboard','new-order':'New Import Order','orders':'All Orders','order-detail':'Order Detail','calculator':'Quick Calculator','batch':'Price Table','reports':'Reports','settings':'Settings'};
 let currentPage = 'dashboard';
 
 function routeFromHash() {
@@ -1181,7 +1353,7 @@ function routeFromHash() {
   const renders = {
     'dashboard':renderDashboard,'new-order':()=>renderOrderForm(editingOrderId),
     'orders':renderOrders,'order-detail':renderOrderDetail,
-    'calculator':renderCalculator,'reports':renderReports,'settings':renderSettings
+    'calculator':renderCalculator,'batch':renderBatchCalc,'reports':renderReports,'settings':renderSettings
   };
   const fn = renders[h];
   document.getElementById('pg').innerHTML = fn ? fn() : '';
@@ -1196,6 +1368,28 @@ function routeFromHash() {
       var btn = document.getElementById('calc-btn');
       if (btn) btn.addEventListener('click', qCalc);
     }, 50);
+  }
+  if (h==='batch') {
+    setTimeout(function(){
+      renderBatchRows();
+      var addRow = document.getElementById('bt-add-row');
+      if (addRow) addRow.addEventListener('click', function(){
+        var last = batchRows[batchRows.length-1];
+        batchRows.push(newBatchRow(last?.product||''));
+        renderBatchRows();
+      });
+      var addProd = document.getElementById('bt-add-product');
+      if (addProd) addProd.addEventListener('click', function(){
+        batchRows.push(newBatchRow('New Product'));
+        renderBatchRows();
+      });
+      var saveBtn = document.getElementById('bt-save');
+      if (saveBtn) saveBtn.addEventListener('click', function(){
+        save(); toast('Table saved!','s');
+      });
+      var xlBtn = document.getElementById('bt-export-xl');
+      if (xlBtn) xlBtn.addEventListener('click', exportBatchExcel);
+    }, 60);
   }
   document.getElementById('ov').classList.remove('show');
   document.getElementById('sidebar').classList.remove('open');
